@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 
@@ -22,6 +23,7 @@ export default function RootLayout({
         <main className="min-h-screen flex flex-col items-center">
           {children}
         </main>
+        <Toaster />
       </body>
     </html>
   );
