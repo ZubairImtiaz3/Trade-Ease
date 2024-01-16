@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
 import { UserAuthForm } from "@/components/auth/LoginForm";
+import { checkAuth } from "@/utils/supabase/session";
 
 export const metadata: Metadata = {
   title: "Login",
@@ -16,11 +17,16 @@ interface SignInCredentials {
   password: string;
 }
 
-export default function AuthenticationPage({
+export default async function AuthenticationPage({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
+  const session = await checkAuth();
+  if (session?.access_token) {
+    redirect("/");
+  }
+
   const handleSignIn = async ({ email, password }: SignInCredentials) => {
     "use server";
     console.log(email, password);
