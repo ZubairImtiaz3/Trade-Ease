@@ -15,8 +15,10 @@ import { useEffect } from "react";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   email: string;
   password: string;
-  searchParams: { message?: string };
-  onSignIn?: (data: { email: string; password: string }) => Promise<void>;
+  onSignIn?: (data: {
+    email: string;
+    password: string;
+  }) => Promise<{ success?: boolean; error?: string }>;
 }
 
 const validationSchema = yup.object().shape({
@@ -32,12 +34,10 @@ export function UserAuthForm({
   email,
   password,
   onSignIn,
-  searchParams,
   ...props
 }: UserAuthFormProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [submissionCount, setSubmissionCount] = React.useState(0);
   const {
     register,
     handleSubmit,
@@ -50,24 +50,27 @@ export function UserAuthForm({
   async function onSubmit(data: { email: string; password: string }) {
     setIsLoading(true);
     if (onSignIn) {
-      await onSignIn({
+      const response = await onSignIn({
         email: data.email,
         password: data.password,
       });
+
+      if (response?.error) {
+        toast({
+          variant: "default",
+          title: response.error,
+          description: "Please check your email and password",
+        });
+      } else {
+        toast({
+          variant: "default",
+          title: "Successfully logged in.",
+          description: "Welcome to Trade Ease",
+        });
+      }
     }
-    setSubmissionCount((prevCount) => prevCount + 1);
     setIsLoading(false);
   }
-
-  useEffect(() => {
-    if (searchParams.message) {
-      toast({
-        variant: "default",
-        title: searchParams.message,
-        description: "Please check your email and password.",
-      });
-    }
-  }, [searchParams.message, submissionCount]);
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>

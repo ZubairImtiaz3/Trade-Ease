@@ -17,11 +17,7 @@ interface SignInCredentials {
   password: string;
 }
 
-export default async function AuthenticationPage({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
+export default async function AuthenticationPage({}: {}) {
   const session = await checkAuth();
   if (session?.access_token) {
     redirect("/");
@@ -29,7 +25,6 @@ export default async function AuthenticationPage({
 
   const handleSignIn = async ({ email, password }: SignInCredentials) => {
     "use server";
-    console.log(email, password);
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
 
@@ -39,7 +34,7 @@ export default async function AuthenticationPage({
     });
 
     if (error) {
-      return redirect("/login?message=Could not authenticate user");
+      return { error: error.message };
     }
 
     return redirect("/");
@@ -76,12 +71,7 @@ export default async function AuthenticationPage({
                 Enter your email and password to login
               </p>
             </div>
-            <UserAuthForm
-              onSignIn={handleSignIn}
-              searchParams={searchParams}
-              email=""
-              password=""
-            />
+            <UserAuthForm onSignIn={handleSignIn} email="" password="" />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
