@@ -1,11 +1,12 @@
-import { cookies } from "next/headers";
+import AuthButton from "@/components/auth/AuthButton";
+import withAuth from "@/components/auth/WithAuth";
 
-export default async function Index() {
-  const cookieStore = cookies();
-
+function Index() {
   return (
     <>
-      <div>Hello World</div>
+      <AuthButton />
     </>
   );
 }
+
+export default withAuth(Index);
