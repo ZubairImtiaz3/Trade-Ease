@@ -8,7 +8,7 @@ import { UserAuthForm } from "@/components/auth/LoginForm";
 import { checkAuth } from "@/utils/supabase/session";
 
 export const metadata: Metadata = {
-  title: "Login",
+  title: "Login to Trade Ease",
   description: "Login to your admin account.",
 };
 
