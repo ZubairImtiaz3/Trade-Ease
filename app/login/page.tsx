@@ -1,4 +1,4 @@
-import { headers, cookies } from "next/headers";
+import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -38,6 +38,31 @@ export default async function AuthenticationPage({}: {}) {
     }
 
     return redirect("/");
+  };
+
+  const handleOAuth = async () => {
+    "use server";
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+
+    const {
+      data: { users },
+    } = await supabase.auth.admin.listUsers();
+
+    console.log("users", users);
+
+    if (data.url !== null) {
+      redirect(data.url);
+    }
   };
 
   return (
