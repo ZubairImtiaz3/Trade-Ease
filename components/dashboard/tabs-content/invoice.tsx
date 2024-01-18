@@ -29,7 +29,7 @@ export function Invoice() {
         <div className="grid grid-cols-3 gap-4 items-end">
           <div className="grid gap-2">
             <Label htmlFor="subject">Invoice#</Label>
-            <Input id="subject" placeholder="" />
+            <Input id="subject" placeholder="Invoice Number" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="subject">Invoice By</Label>
@@ -80,7 +80,7 @@ export function Invoice() {
             placeholder="Customer's Address. City, State, Zip, Country"
           />
         </div>
-        <CardTitle>Sales Information</CardTitle>
+        <CardTitle>Sales Summary</CardTitle>
         <InvoiceTable />
         <div className="grid gap-2">
           <Label htmlFor="area">Area</Label>

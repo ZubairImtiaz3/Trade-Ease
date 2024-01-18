@@ -17,7 +17,7 @@ import { UserNav } from "@/components/dashboard/user-nav";
 import { Invoice } from "@/components/dashboard/tabs-content/invoice";
 
 import withAuth from "@/components/auth/WithAuth";
-
+import { ReportTable } from "@/components/dashboard/tabs-content/report-table";
 
 function Index() {
   return (
@@ -45,12 +45,7 @@ function Index() {
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="invoice">Create Invoice</TabsTrigger>
-              <TabsTrigger value="reports" disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
-                Notifications
-              </TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -180,6 +175,9 @@ function Index() {
             </TabsContent>
             <TabsContent value="invoice" className="space-y-4">
               <Invoice />
+            </TabsContent>
+            <TabsContent value="reports" className="space-y-4">
+              <ReportTable />
             </TabsContent>
           </Tabs>
         </div>
