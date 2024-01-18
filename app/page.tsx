@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,6 +14,7 @@ import { RecentSales } from "@/components/dashboard/recent-sales";
 import { Search } from "@/components/dashboard/search";
 import TeamSwitcher from "@/components/dashboard/team-switcher";
 import { UserNav } from "@/components/dashboard/user-nav";
+import { Invoice } from "@/components/dashboard/tabs-content/invoice";
 
 import withAuth from "@/components/auth/WithAuth";
 
@@ -43,9 +43,7 @@ function Index() {
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
-              </TabsTrigger>
+              <TabsTrigger value="invoice">Create Invoice</TabsTrigger>
               <TabsTrigger value="reports" disabled>
                 Reports
               </TabsTrigger>
@@ -178,6 +176,9 @@ function Index() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+            <TabsContent value="invoice" className="space-y-4">
+              <Invoice />
             </TabsContent>
           </Tabs>
         </div>
