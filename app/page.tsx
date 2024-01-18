@@ -18,6 +18,7 @@ import { Invoice } from "@/components/dashboard/tabs-content/invoice";
 
 import withAuth from "@/components/auth/WithAuth";
 
+
 function Index() {
   return (
     <>

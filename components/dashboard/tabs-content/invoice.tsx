@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { InvoiceTable } from "./invoice-table";
 
 export function Invoice() {
   return (
@@ -79,6 +80,8 @@ export function Invoice() {
             placeholder="Customer's Address. City, State, Zip, Country"
           />
         </div>
+        <CardTitle>Sales Information</CardTitle>
+        <InvoiceTable />
         <div className="grid gap-2">
           <Label htmlFor="area">Area</Label>
           <Select defaultValue="billing">
