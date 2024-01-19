@@ -1,3 +1,5 @@
+"use client";
+import signOut from "@/actions/signOut";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,38 +13,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
-export async function UserNav() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+interface UserNav {
+  user: { email?: string; user_metadata?: { name?: string } } | null;
+}
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export function UserNav({ user }: UserNav) {
+  const { toast } = useToast();
 
-  console.log(user);
-
-  //function to get avatar initials
-  const userName = user?.user_metadata?.name;
-  if (userName) {
-    const nameParts = userName.split(" ");
-    const initials = nameParts.map((word: any) => word[0]);
-    const result = initials.join("");
-    console.log(result);
-  } else {
-    console.log("Name not available");
-  }
-
-  //function to sign out
-  const signOut = async () => {
-    "use server";
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-    await supabase.auth.signOut();
-    return redirect("/login");
+  const handleSignOut = async () => {
+    try {
+      const response = await signOut();
+      if (response?.error === null) {
+        toast({
+          variant: "default",
+          title: "Successfully logged out.",
+          description: "Feel free to come back later.",
+        });
+      } else {
+        toast({
+          variant: "default",
+          title: response?.error,
+          description: "An unexpected error occurred during sign-out.",
+        });
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred during sign-out:", error);
+    }
   };
 
   return (
@@ -88,7 +86,7 @@ export async function UserNav() {
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <form action={signOut}>
+        <form action={handleSignOut}>
           <button>
             <DropdownMenuItem>
               Log out

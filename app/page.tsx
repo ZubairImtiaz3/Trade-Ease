@@ -21,11 +21,20 @@ import { Search } from "@/components/dashboard/search";
 import TeamSwitcher from "@/components/dashboard/team-switcher";
 import { UserNav } from "@/components/dashboard/user-nav";
 import { Invoice } from "@/components/dashboard/tabs-content/invoice";
-
-import withAuth from "@/components/auth/WithAuth";
 import { ReportTable } from "@/components/dashboard/tabs-content/report-table";
 
-function Index() {
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import withAuth from "@/components/auth/WithAuth";
+
+async function Index() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <>
       <div className="flex-col flex">
@@ -35,7 +44,7 @@ function Index() {
             <MainNav className="mx-6" />
             <div className="ml-auto flex items-center space-x-4">
               <Search />
-              <UserNav />
+              <UserNav user={user} />
             </div>
           </div>
         </div>
