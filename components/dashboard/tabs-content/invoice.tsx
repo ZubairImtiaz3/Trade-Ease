@@ -82,21 +82,6 @@ export function Invoice() {
         </div>
         <CardTitle>Sales Summary</CardTitle>
         <InvoiceTable />
-        <div className="grid gap-2">
-          <Label htmlFor="area">Area</Label>
-          <Select defaultValue="billing">
-            <SelectTrigger id="area">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="team">Team</SelectItem>
-              <SelectItem value="billing">Billing</SelectItem>
-              <SelectItem value="account">Account</SelectItem>
-              <SelectItem value="deployments">Deployments</SelectItem>
-              <SelectItem value="support">Support</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </CardContent>
       <CardFooter className="justify-between space-x-2">
         <Button variant="ghost">Cancel</Button>
