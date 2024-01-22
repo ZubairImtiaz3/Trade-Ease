@@ -1,4 +1,5 @@
-import { getProfile } from "@/actions/settingsSubmit";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 import ProfileForm from "@/components/settings/ProfileForm";
 import {
   Card,
@@ -8,11 +9,16 @@ import {
 } from "@/components/ui/card";
 
 const Settings = async () => {
-  const profileData = await getProfile();
-  const formData =
-    Array.isArray(profileData) && profileData.length > 0
-      ? profileData[0]
-      : null;
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data } = await supabase.from("profiles").select().eq("id", user?.id);
+
+  const profileData = data && data[0] ? data[0] : null;
 
   return (
     <div className="pt-6 p-8">
@@ -25,7 +31,7 @@ const Settings = async () => {
             the board.
           </CardDescription>
         </CardHeader>
-        <ProfileForm data={formData} />
+        <ProfileForm data={profileData} />
       </Card>
     </div>
   );
