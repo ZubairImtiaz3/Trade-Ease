@@ -47,6 +47,10 @@ const ProfileForm = ({ data }: ProfileFormProps) => {
   const { toast } = useToast();
 
   function omitId(obj: Record<string, any>): Record<string, any> {
+    if (obj === null || obj === undefined) {
+      return {};
+    }
+
     const { id, ...rest } = obj;
     return rest;
   }
