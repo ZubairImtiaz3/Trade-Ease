@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Icons } from "@/components/ui/icons";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import isEqual from "lodash/isEqual";
 
 interface FormData {
   company_name: string;
@@ -45,8 +46,20 @@ const ProfileForm = ({ data }: ProfileFormProps) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const { toast } = useToast();
 
+  function omitId(obj: Record<string, any>): Record<string, any> {
+    const { id, ...rest } = obj;
+    return rest;
+  }
+
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
-    console.log(formData);
+    if (isEqual(omitId(formData), omitId(data))) {
+      return toast({
+        variant: "default",
+        title: "Nothing to update.",
+        description: "Please make changes to update.",
+      });
+    }
+
     setLoading(true);
 
     const error = await settingsSubmit({ formData });
