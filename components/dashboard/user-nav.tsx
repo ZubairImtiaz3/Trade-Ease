@@ -72,6 +72,24 @@ export function UserNav({ user }: UserNav) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <Link href="/">
+            <DropdownMenuItem className="md:hidden">
+              Overview
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/customers" className="md:hidden">
+            <DropdownMenuItem>
+              Customers
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
+          <Link href="/products" className="md:hidden">
+            <DropdownMenuItem>
+              Products
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
           <Link href="/settings">
             <DropdownMenuItem>
               Settings

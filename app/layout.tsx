@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">
-        <main className="min-h-screen flex flex-col max-w-[85%] mx-auto">
+        <main className="min-h-screen flex flex-col sm:max-w-[85%] mx-auto">
           {children}
         </main>
         <Toaster />

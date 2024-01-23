@@ -1,8 +1,9 @@
+import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -13,7 +14,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { InvoiceTable } from "./invoice-table";
 
-export function Invoice() {
+export async function Invoice() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data } = await supabase.from("profiles").select().eq("id", user?.id);
+
+  const companyData = data && data[0] ? data[0] : null;
+
   return (
     <Card>
       <CardHeader>
@@ -39,16 +49,28 @@ export function Invoice() {
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label htmlFor="subject">Name</Label>
-            <Input id="subject" placeholder="Enter your company name" />
+            <Input
+              disabled={companyData?.company_name}
+              value={companyData?.company_name}
+              id="subject"
+              placeholder="Enter your company name"
+            />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="subject">Phone Number</Label>
-            <Input id="subject" placeholder="Enter your company phone" />
+            <Input
+              disabled={companyData?.company_phone}
+              value={companyData?.company_phone}
+              id="subject"
+              placeholder="Enter your company phone"
+            />
           </div>
         </div>
         <div className="grid gap-2">
           <Label htmlFor="description">Address</Label>
           <Textarea
+            disabled={companyData?.company_address}
+            value={companyData?.company_address}
             id="description"
             placeholder="Company's Address. City, State, Zip, Country"
           />

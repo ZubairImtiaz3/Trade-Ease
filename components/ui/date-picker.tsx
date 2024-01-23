@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 
 export function DatePicker() {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = React.useState<Date>(new Date());
 
   return (
     <Popover>
@@ -25,6 +25,7 @@ export function DatePicker() {
             "w-auto justify-start text-left font-normal",
             !date && "text-muted-foreground"
           )}
+          disabled
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -34,7 +35,7 @@ export function DatePicker() {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={() => {}}
           initialFocus
         />
       </PopoverContent>
