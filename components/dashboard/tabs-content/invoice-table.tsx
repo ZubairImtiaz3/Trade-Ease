@@ -22,10 +22,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 import { v4 as uuidv4 } from "uuid";
 
-export type Payment = {
+type ProductDetail = {
+  size: string;
+  squareFt: string;
+  amount: string;
+};
+
+type ProductDetails = {
+  details: ProductDetail[];
+};
+
+// Define a map for product details
+const productDetailsMap: Record<string, ProductDetails> = {
+  team: {
+    details: [
+      { size: "small", squareFt: "100", amount: "10000" },
+      { size: "medium", squareFt: "200", amount: "20000" },
+      { size: "large", squareFt: "300", amount: "30000" },
+    ],
+  },
+  billing: {
+    details: [
+      { size: "small", squareFt: "150", amount: "15000" },
+      { size: "medium", squareFt: "250", amount: "25000" },
+    ],
+  },
+  // Add more products as needed
+};
+
+// Define the Product type
+export type Product = {
   id: string;
   product: string;
   size: string;
@@ -36,7 +66,7 @@ export type Payment = {
 };
 
 export function InvoiceTable() {
-  const createNewRow = (): Payment => {
+  const createNewRow = (): Product => {
     return {
       id: uuidv4(),
       product: "",
@@ -48,28 +78,36 @@ export function InvoiceTable() {
     };
   };
 
-  const [data, setData] = useState<Payment[]>([createNewRow()]);
+  const [data, setData] = useState<Product[]>([createNewRow()]);
 
   const handleValueChange = (
     productId: string,
     newValue: string | number,
-    property: keyof Payment
+    property: keyof Product
   ) => {
     setData((currentData) => {
       let newData = currentData.map((item) => {
         if (item.id === productId) {
-          const updatedValue =
-            property === "quantity" ||
-            property === "disc" ||
-            property === "amount"
-              ? Number(newValue)
-              : newValue;
-          return { ...item, [property]: updatedValue };
+          let updatedItem = { ...item, [property]: newValue };
+
+          // Automatically update squareft and amount when size changes
+          if (property === "size") {
+            const productDetails = productDetailsMap[item.product]?.details;
+            const detail = productDetails?.find(
+              (detail) => detail.size === newValue
+            );
+            if (detail) {
+              updatedItem.squareft = detail.squareFt;
+              updatedItem.amount = Number(detail.amount);
+            }
+          }
+
+          return updatedItem;
         }
         return item;
       });
 
-      // Check if the last row was updated and if a product is selected
+      // Automatically add a new row if the last row's product is updated
       if (
         property === "product" &&
         productId === newData[newData.length - 1].id &&
@@ -82,7 +120,7 @@ export function InvoiceTable() {
     });
   };
 
-  const columns: ColumnDef<Payment>[] = [
+  const columns: ColumnDef<Product>[] = [
     {
       accessorKey: "product",
       header: "Product",
@@ -97,11 +135,11 @@ export function InvoiceTable() {
             <SelectValue placeholder="Select a product" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="team">Team</SelectItem>
-            <SelectItem value="billing">Billing</SelectItem>
-            <SelectItem value="account">Account</SelectItem>
-            <SelectItem value="deployments">Deployments</SelectItem>
-            <SelectItem value="support">Support</SelectItem>
+            {Object.keys(productDetailsMap).map((product) => (
+              <SelectItem key={product} value={product}>
+                {product.charAt(0).toUpperCase() + product.slice(1)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       ),
@@ -109,107 +147,111 @@ export function InvoiceTable() {
     {
       accessorKey: "size",
       header: "Size",
-      cell: ({ row }) => (
-        <Select
-          defaultValue={row.original.size}
-          onValueChange={(newValue) =>
-            handleValueChange(row.original.id, newValue, "size")
-          }
-        >
-          <SelectTrigger id={`size-select-${row.id}`}>
-            <SelectValue placeholder="Select a size" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="small">Small</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="large">Large</SelectItem>
-          </SelectContent>
-        </Select>
-      ),
+      cell: ({ row }) => {
+        const product = row.original.product;
+        const sizes = product
+          ? productDetailsMap[product]?.details.map((detail) => detail.size) ||
+            []
+          : [];
+        return (
+          <Select
+            defaultValue={row.original.size}
+            onValueChange={(newSize) =>
+              handleValueChange(row.original.id, newSize, "size")
+            }
+          >
+            <SelectTrigger id={`size-select-${row.id}`}>
+              <SelectValue placeholder="Select a size" />
+            </SelectTrigger>
+            <SelectContent>
+              {sizes.map((size) => (
+                <SelectItem key={size} value={size}>
+                  {size}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      },
     },
     {
       accessorKey: "squareft",
       header: "Square Ft",
-      cell: ({ row }) => (
-        <Select
-          defaultValue={row.original.squareft}
-          onValueChange={(newValue) =>
-            handleValueChange(row.original.id, newValue, "squareft")
-          }
-        >
-          <SelectTrigger id={`squareft-select-${row.id}`}>
-            <SelectValue placeholder="Select square ft" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="100">100</SelectItem>
-            <SelectItem value="200">200</SelectItem>
-            <SelectItem value="300">300</SelectItem>
-          </SelectContent>
-        </Select>
-      ),
+      cell: ({ row }) => {
+        const product = row.original.product;
+        const squareFts = product
+          ? productDetailsMap[product]?.details.map(
+              (detail) => detail.squareFt
+            ) || []
+          : [];
+        return (
+          <Select
+            defaultValue={row.original.squareft}
+            onValueChange={(newSquareFt) =>
+              handleValueChange(row.original.id, newSquareFt, "squareft")
+            }
+          >
+            <SelectTrigger id={`squareft-select-${row.id}`}>
+              <SelectValue placeholder="Select square ft" />
+            </SelectTrigger>
+            <SelectContent>
+              {squareFts.map((squareFt) => (
+                <SelectItem key={squareFt} value={squareFt}>
+                  {squareFt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      },
     },
     {
       accessorKey: "quantity",
       header: "Quantity",
       cell: ({ row }) => (
-        <Select
-          defaultValue={row.original.quantity.toString()}
-          onValueChange={(newValue) =>
-            handleValueChange(row.original.id, newValue, "quantity")
+        <Input
+          className="max-w-[5rem]"
+          type="number"
+          value={row.original.quantity}
+          onChange={(e) =>
+            handleValueChange(row.original.id, e.target.value, "quantity")
           }
-        >
-          <SelectTrigger id={`quantity-select-${row.id}`}>
-            <SelectValue placeholder="Select quantity" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1">1</SelectItem>
-            <SelectItem value="2">2</SelectItem>
-            <SelectItem value="3">3</SelectItem>
-          </SelectContent>
-        </Select>
+        />
       ),
     },
     {
       accessorKey: "disc",
       header: "Disc",
       cell: ({ row }) => (
-        <Select
-          defaultValue={row.original.disc.toString()}
-          onValueChange={(newValue) =>
-            handleValueChange(row.original.id, newValue, "disc")
+        <Input
+          className="max-w-[5rem]"
+          type="number"
+          value={row.original.disc}
+          onChange={(e) =>
+            handleValueChange(row.original.id, e.target.value, "disc")
           }
-        >
-          <SelectTrigger id={`disc-select-${row.id}`}>
-            <SelectValue placeholder="Select disc" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="10">10</SelectItem>
-            <SelectItem value="20">20</SelectItem>
-            <SelectItem value="30">30</SelectItem>
-          </SelectContent>
-        </Select>
+        />
       ),
     },
     {
       accessorKey: "amount",
       header: "Amount",
-      cell: ({ row }) => (
-        <Select
-          defaultValue={row.original.amount.toString()}
-          onValueChange={(newValue) =>
-            handleValueChange(row.original.id, newValue, "amount")
-          }
-        >
-          <SelectTrigger id={`amount-select-${row.id}`}>
-            <SelectValue placeholder="Select amount" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="1000">1000</SelectItem>
-            <SelectItem value="2000">2000</SelectItem>
-            <SelectItem value="3000">3000</SelectItem>
-          </SelectContent>
-        </Select>
-      ),
+      cell: ({ row }) => {
+        const product = row.original.product;
+        const productDetails = productDetailsMap[product]?.details;
+        const detail = productDetails?.find(
+          (detail) => detail.size === row.original.size
+        );
+        const amount = detail ? detail.amount : "";
+        return (
+          <Input
+            className="max-w-[10rem]"
+            type="number"
+            value={amount.toString()}
+            readOnly
+          />
+        );
+      },
     },
   ];
 
