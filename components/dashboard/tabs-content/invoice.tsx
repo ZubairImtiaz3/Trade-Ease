@@ -27,27 +27,27 @@ export async function Invoice() {
   return (
     <Card>
       <CardHeader>
-        <div className="grid grid-cols-3 gap-4 items-end">
-          <div className="grid gap-2">
+        <div className="flex gap-4 justify-between items-center flex-wrap">
+          <div className="grow">
             <Label htmlFor="subject">Invoice#</Label>
             <Input id="subject" placeholder="Invoice Number" />
           </div>
-          <div className="grid gap-2">
+          <div className="grow">
             <Label htmlFor="subject">Invoice By</Label>
             <Input id="subject" placeholder="Invoicer's Name" />
           </div>
-          <div className="grid gap-2">
+          <div className="flex flex-col justify-end gap-1 grow">
             <Label htmlFor="subject">Date</Label>
             <DatePicker />
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="grid gap-6">
+      <CardContent className="flex flex-col gap-6">
         <CardTitle>Company's Information</CardTitle>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-2">
+        <div className="flex gap-4 items-center flex-wrap">
+          <div className="grow">
             <Label htmlFor="subject">Name</Label>
             <Input
               disabled={companyData?.company_name}
@@ -56,7 +56,7 @@ export async function Invoice() {
               placeholder="Enter your company name"
             />
           </div>
-          <div className="grid gap-2">
+          <div className="grow">
             <Label htmlFor="subject">Phone Number</Label>
             <Input
               disabled={companyData?.company_phone}
@@ -66,7 +66,7 @@ export async function Invoice() {
             />
           </div>
         </div>
-        <div className="grid gap-2">
+        <div>
           <Label htmlFor="description">Address</Label>
           <Textarea
             disabled={companyData?.company_address}
@@ -76,17 +76,17 @@ export async function Invoice() {
           />
         </div>
         <CardTitle>Customer's Information</CardTitle>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-2">
+        <div className="flex gap-4 items-center flex-wrap">
+          <div className="grow">
             <Label htmlFor="subject">Name</Label>
             <Input id="subject" placeholder="Enter you customer's name" />
           </div>
-          <div className="grid gap-2">
+          <div className="grow">
             <Label htmlFor="subject">Phone Number</Label>
             <Input id="subject" placeholder="Enter you customer's phone" />
           </div>
         </div>
-        <div className="grid gap-2">
+        <div>
           <Label htmlFor="description">Address</Label>
           <Textarea
             id="description"

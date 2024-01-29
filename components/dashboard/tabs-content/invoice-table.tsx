@@ -237,7 +237,7 @@ export function InvoiceTable() {
       header: "Disc",
       cell: ({ row }) => (
         <Input
-          className="max-w-[5rem]"
+          className="w-12 md:max-w-[5rem]"
           type="number"
           value={row.original.disc}
           onChange={(e) =>
@@ -340,7 +340,7 @@ export function InvoiceTable() {
         </Table>
       </div>
 
-      <div className="flex gap-16 mt-6 justify-end mr-16">
+      <div className="flex gap-4 justify-center lg:gap-16 mt-6 lg:justify-end lg:mr-16">
         <div>
           <Label htmlFor="subject">Total Disc</Label>
           <Input
