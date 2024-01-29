@@ -99,8 +99,8 @@ const ProfileForm = ({ data }: ProfileFormProps) => {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="grid gap-6">
-          <div className="grid grid-cols-2 gap-4 items-baseline">
-            <div className="grid gap-2">
+          <div className="flex flex-wrap gap-4 items-baseline">
+            <div className="grow">
               <Label htmlFor="company_name">Name</Label>
               <Input
                 id="company_name"
@@ -115,7 +115,7 @@ const ProfileForm = ({ data }: ProfileFormProps) => {
                 </p>
               )}
             </div>
-            <div className="grid gap-2">
+            <div className="grow">
               <Label htmlFor="company_phone">Phone Number</Label>
               <Input
                 type="number"
@@ -130,7 +130,7 @@ const ProfileForm = ({ data }: ProfileFormProps) => {
               )}
             </div>
           </div>
-          <div className="grid gap-2">
+          <div className="flex flex-col gap-1">
             <Label htmlFor="company_address">Address</Label>
             <Textarea
               id="company_address"
