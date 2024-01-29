@@ -22,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 import { v4 as uuidv4 } from "uuid";
@@ -90,7 +92,7 @@ export function InvoiceTable() {
         if (item.id === productId) {
           let updatedItem = { ...item, [property]: newValue };
 
-          // Automatically update squareft and amount when size changes
+          // Update squareft and amount when size changes
           if (property === "size") {
             const productDetails = productDetailsMap[item.product]?.details;
             const detail = productDetails?.find(
@@ -98,7 +100,18 @@ export function InvoiceTable() {
             );
             if (detail) {
               updatedItem.squareft = detail.squareFt;
-              updatedItem.amount = Number(detail.amount);
+              updatedItem.amount = Number(detail.amount) * updatedItem.quantity;
+            }
+          }
+
+          // Recalculate amount when quantity changes
+          if (property === "quantity") {
+            const productDetails = productDetailsMap[item.product]?.details;
+            const detail = productDetails?.find(
+              (detail) => detail.size === item.size
+            );
+            if (detail) {
+              updatedItem.amount = Number(detail.amount) * Number(newValue);
             }
           }
 
@@ -238,11 +251,12 @@ export function InvoiceTable() {
       header: "Amount",
       cell: ({ row }) => {
         const product = row.original.product;
+        const quantity = row.original.quantity;
         const productDetails = productDetailsMap[product]?.details;
         const detail = productDetails?.find(
           (detail) => detail.size === row.original.size
         );
-        const amount = detail ? detail.amount : "";
+        const amount = detail ? Number(detail.amount) * quantity : 0; // Calculate amount based on quantity
         return (
           <Input
             className="max-w-[10rem]"
@@ -254,6 +268,21 @@ export function InvoiceTable() {
       },
     },
   ];
+
+  // Calculate total discount and amount
+  const calculateTotals = () => {
+    let totalDisc = 0;
+    let totalAmount = 0;
+
+    data.forEach((item) => {
+      totalDisc += Number(item.disc);
+      totalAmount += item.amount;
+    });
+
+    return { totalDisc, totalAmount };
+  };
+
+  const { totalDisc, totalAmount } = calculateTotals();
 
   const table = useReactTable({
     data,
@@ -309,6 +338,31 @@ export function InvoiceTable() {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="flex gap-16 mt-6 justify-end mr-16">
+        <div>
+          <Label htmlFor="subject">Total Disc</Label>
+          <Input
+            id="total-disc"
+            className="max-w-[5rem]"
+            type="number"
+            value={totalDisc}
+            readOnly
+            placeholder="Total Discount Amount"
+          />
+        </div>
+        <div>
+          <Label htmlFor="subject">Total Amount</Label>
+          <Input
+            id="total-amount"
+            className="max-w-[10rem]"
+            type="number"
+            value={totalAmount}
+            readOnly
+            placeholder="Total Sale Amount"
+          />
+        </div>
       </div>
     </div>
   );
