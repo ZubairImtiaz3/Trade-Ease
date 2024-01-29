@@ -237,7 +237,7 @@ export function InvoiceTable() {
       header: "Disc",
       cell: ({ row }) => (
         <Input
-          className="w-12 md:max-w-[5rem]"
+          className="w-12 md:w-auto md:max-w-[5rem]"
           type="number"
           value={row.original.disc}
           onChange={(e) =>
