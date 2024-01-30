@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -23,6 +22,17 @@ import { useForm } from "react-hook-form";
 const schema = yup.object().shape({
   invoiceBy: yup.string().required("Invoice by is required"),
   customerName: yup.string().required("Customer Name is required"),
+  invoiceNumber: yup.string().notRequired(),
+  companyName: yup.string().notRequired(),
+  companyPhoneNumber: yup.number().notRequired(),
+  companyAddress: yup.string().notRequired(),
+  customerPhoneNumber: yup
+    .number()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue.trim() === "" ? null : value
+    ),
+  customerAddress: yup.string().notRequired(),
 });
 
 export function Invoice({ userprofile }: any) {
@@ -36,6 +46,9 @@ export function Invoice({ userprofile }: any) {
   });
 
   const onSubmit = (data: any) => {
+    if (userprofile) {
+      data = { ...data, ...userprofile };
+    }
     console.log(data);
   };
 
@@ -43,10 +56,13 @@ export function Invoice({ userprofile }: any) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
         <CardHeader>
-          <div className="flex gap-4 justify-between items-center flex-wrap">
+          <div className="flex gap-4 justify-between flex-wrap items-baseline">
             <div className="grow">
               <Label htmlFor="invoice#">Invoice#</Label>
-              <Input placeholder="Invoice Number" />
+              <Input
+                {...register("invoiceNumber")}
+                placeholder="Invoice Number"
+              />
             </div>
             <div className="grow">
               <Label htmlFor="invoiceBy">Invoice By</Label>
@@ -69,6 +85,7 @@ export function Invoice({ userprofile }: any) {
             <div className="grow">
               <Label htmlFor="companyName">Name</Label>
               <Input
+                {...register("companyName")}
                 disabled={userprofile?.company_name}
                 value={userprofile?.company_name}
                 placeholder="Enter your company name"
@@ -77,6 +94,8 @@ export function Invoice({ userprofile }: any) {
             <div className="grow">
               <Label htmlFor="companyPhoneNumber">Phone Number</Label>
               <Input
+                {...register("companyPhoneNumber")}
+                type="number"
                 disabled={userprofile?.company_phone}
                 value={userprofile?.company_phone}
                 placeholder="Enter your company phone"
@@ -86,13 +105,14 @@ export function Invoice({ userprofile }: any) {
           <div>
             <Label htmlFor="companyAddress">Address</Label>
             <Textarea
+              {...register("companyAddress")}
               disabled={userprofile?.company_address}
               value={userprofile?.company_address}
               placeholder="Company's Address. City, State, Zip, Country"
             />
           </div>
           <CardTitle>Customer's Information</CardTitle>
-          <div className="flex gap-4 items-center flex-wrap">
+          <div className="flex gap-4 items-baseline flex-wrap">
             <div className="grow">
               <Label htmlFor="customerName">Name</Label>
               <Input
@@ -106,12 +126,19 @@ export function Invoice({ userprofile }: any) {
             </div>
             <div className="grow">
               <Label htmlFor="customerPhoneNumber">Phone Number</Label>
-              <Input placeholder="Enter you customer's phone" />
+              <Input
+                {...register("customerPhoneNumber")}
+                type="number"
+                placeholder="Enter you customer's phone"
+              />
             </div>
           </div>
           <div>
             <Label htmlFor="customerAddress">Address</Label>
-            <Textarea placeholder="Customer's Address. City, State, Zip, Country" />
+            <Textarea
+              {...register("customerAddress")}
+              placeholder="Customer's Address. City, State, Zip, Country"
+            />
           </div>
           <CardTitle>Sales Summary</CardTitle>
           <InvoiceTable />
