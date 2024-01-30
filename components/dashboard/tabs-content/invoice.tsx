@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -24,9 +25,7 @@ const schema = yup.object().shape({
   customerName: yup.string().required("Customer Name is required"),
 });
 
-export function Invoice() {
-  const companyData = null;
-
+export function Invoice({ userprofile }: any) {
   //Process Invoice Data
   const {
     register,
@@ -70,16 +69,16 @@ export function Invoice() {
             <div className="grow">
               <Label htmlFor="companyName">Name</Label>
               <Input
-                disabled={companyData?.company_name}
-                value={companyData?.company_name}
+                disabled={userprofile?.company_name}
+                value={userprofile?.company_name}
                 placeholder="Enter your company name"
               />
             </div>
             <div className="grow">
               <Label htmlFor="companyPhoneNumber">Phone Number</Label>
               <Input
-                disabled={companyData?.company_phone}
-                value={companyData?.company_phone}
+                disabled={userprofile?.company_phone}
+                value={userprofile?.company_phone}
                 placeholder="Enter your company phone"
               />
             </div>
@@ -87,8 +86,8 @@ export function Invoice() {
           <div>
             <Label htmlFor="companyAddress">Address</Label>
             <Textarea
-              disabled={companyData?.company_address}
-              value={companyData?.company_address}
+              disabled={userprofile?.company_address}
+              value={userprofile?.company_address}
               placeholder="Company's Address. City, State, Zip, Country"
             />
           </div>

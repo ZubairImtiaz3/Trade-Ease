@@ -18,8 +18,19 @@ import { Overview } from "@/components/dashboard/overview";
 import { RecentSales } from "@/components/dashboard/recent-sales";
 import { Invoice } from "@/components/dashboard/tabs-content/invoice";
 import { ReportTable } from "@/components/dashboard/tabs-content/report-table";
+import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Index() {
+export default async function Index() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data } = await supabase.from("profiles").select().eq("id", user?.id);
+
+  const userprofile = data && data[0] ? data[0] : null;
+
   return (
     <>
       <div className="flex-1 space-y-4 p-8 pt-6">
@@ -175,7 +186,7 @@ export default function Index() {
             </div>
           </TabsContent>
           <TabsContent value="invoice" className="space-y-4">
-            <Invoice />
+            <Invoice userprofile={userprofile} />
           </TabsContent>
           <TabsContent value="reports" className="space-y-4">
             <ReportTable />
