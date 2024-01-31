@@ -18,6 +18,7 @@ import { InvoiceTable } from "./invoice-table";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import React, { useState } from "react";
 
 const schema = yup.object().shape({
   invoiceBy: yup.string().required("Invoice by is required"),
@@ -36,6 +37,13 @@ const schema = yup.object().shape({
 });
 
 export function Invoice({ userprofile }: any) {
+  const [saleSummary, setSaleSummary] = useState();
+
+  const invoiceSalesSummary = (data: any) => {
+    setSaleSummary(data);
+    console.log("invoice summary", data);
+  };
+
   //Process Invoice Data
   const {
     register,
@@ -49,7 +57,8 @@ export function Invoice({ userprofile }: any) {
     if (userprofile) {
       data = { ...data, ...userprofile };
     }
-    console.log(data);
+    const completeInvoice = { ...data, invoiceSummary: saleSummary };
+    console.log("coneaf", completeInvoice);
   };
 
   return (
@@ -141,7 +150,7 @@ export function Invoice({ userprofile }: any) {
             />
           </div>
           <CardTitle>Sales Summary</CardTitle>
-          <InvoiceTable />
+          <InvoiceTable invoiceSalesSummary={invoiceSalesSummary} />
         </CardContent>
         <CardFooter className="justify-between space-x-2">
           <Link href="/">

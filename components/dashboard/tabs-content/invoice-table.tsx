@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -67,7 +67,7 @@ export type Product = {
   amount: number;
 };
 
-export function InvoiceTable() {
+export function InvoiceTable({ invoiceSalesSummary }: any) {
   const createNewRow = (): Product => {
     return {
       id: uuidv4(),
@@ -131,6 +131,8 @@ export function InvoiceTable() {
 
       return newData;
     });
+
+    invoiceSalesSummary(data);
   };
 
   const columns: ColumnDef<Product>[] = [
@@ -289,10 +291,6 @@ export function InvoiceTable() {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  useEffect(() => {
-    console.log("Updated Data: ", data);
-  }, [data]);
 
   return (
     <div className="w-full">
