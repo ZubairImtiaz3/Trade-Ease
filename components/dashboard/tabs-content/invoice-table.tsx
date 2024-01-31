@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -81,6 +81,7 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
   };
 
   const [data, setData] = useState<Product[]>([createNewRow()]);
+  const [totals, setTotals] = useState({ totalDisc: 0, totalAmount: 0 });
 
   const handleValueChange = (
     productId: string,
@@ -129,10 +130,14 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
         newData = [...newData, createNewRow()];
       }
 
+      // Calculate Totals
+      const { totalDisc, totalAmount } = calculateTotals();
+      setTotals({ totalDisc, totalAmount });
+
+      const combinedDataAndTotals = { ...newData, Totals: totals };
+      invoiceSalesSummary(combinedDataAndTotals);
       return newData;
     });
-
-    invoiceSalesSummary(data);
   };
 
   const columns: ColumnDef<Product>[] = [
@@ -284,7 +289,10 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
     return { totalDisc, totalAmount };
   };
 
-  const { totalDisc, totalAmount } = calculateTotals();
+  useEffect(() => {
+    const { totalDisc, totalAmount } = calculateTotals();
+    setTotals({ totalDisc, totalAmount });
+  }, [data]);
 
   const table = useReactTable({
     data,
@@ -345,7 +353,7 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
             id="total-disc"
             className="max-w-[5rem]"
             type="number"
-            value={totalDisc}
+            value={totals.totalDisc}
             readOnly
             placeholder="Total Discount Amount"
           />
@@ -356,7 +364,7 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
             id="total-amount"
             className="max-w-[10rem]"
             type="number"
-            value={totalAmount}
+            value={totals.totalAmount}
             readOnly
             placeholder="Total Sale Amount"
           />
