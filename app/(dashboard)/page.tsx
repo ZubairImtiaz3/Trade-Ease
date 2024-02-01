@@ -202,7 +202,9 @@ export default async function Index() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {topProduct !== null ? topProduct : "None"}
+                    {topProduct
+                      ? topProduct.charAt(0).toUpperCase() + topProduct.slice(1)
+                      : "None"}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Total Quantity Sold&nbsp;
