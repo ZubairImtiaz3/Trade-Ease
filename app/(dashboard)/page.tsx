@@ -21,6 +21,7 @@ import { ReportTable } from "@/components/dashboard/tabs-content/report-table";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import {
+  recentSales,
   todayTopCustomer,
   totalTodayRevenue,
   totalTodaySales,
@@ -44,6 +45,9 @@ export default async function Index() {
 
   //Get the today top customer
   const { topCustomer, maxTotalAmount } = await todayTopCustomer();
+
+  //Get the recent sales
+  const { recentSalesData } = await recentSales();
 
   return (
     <>
@@ -150,7 +154,7 @@ export default async function Index() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {topCustomer !== null ? topCustomer : ""}
+                    {topCustomer !== null ? topCustomer : "None"}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Total Amount Spent PKR
@@ -197,11 +201,11 @@ export default async function Index() {
                 <CardHeader>
                   <CardTitle>Recent Sales</CardTitle>
                   <CardDescription>
-                    You made 265 sales this month.
+                    Summary Of Recent Generated Invoices
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <RecentSales />
+                  <RecentSales recentSales={recentSalesData} />
                 </CardContent>
               </Card>
             </div>

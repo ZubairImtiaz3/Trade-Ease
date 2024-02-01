@@ -60,3 +60,10 @@ export const todayTopCustomer = async () => {
 
   return { topCustomer, maxTotalAmount };
 };
+
+export const recentSales = async () => {
+  const { invoices, error } = await totalTodayInvoices();
+  let recentSalesData = _.takeRight(invoices, 5);
+
+  return { recentSalesData, error };
+};
