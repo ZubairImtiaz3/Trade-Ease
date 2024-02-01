@@ -61,3 +61,45 @@ export const recentSales = async (supabase: any) => {
 
   return { recentSalesData, error };
 };
+
+export const todayTopProduct = async (supabase: any) => {
+  const { invoices, error } = await totalTodayInvoices(supabase);
+
+  if (error) {
+    return { topProduct: null, totalQuantity: null, error };
+  }
+
+  let topProduct = null;
+  let totalQuantity = 0;
+
+  const allProductIds = _.flatMap(invoices, "id");
+
+  if (allProductIds.length > 0) {
+    const { data: invoiceItems, error: itemsError } = await supabase
+      .from("invoice_items")
+      .select("*")
+      .in("invoice_id", allProductIds);
+
+    if (itemsError) {
+      return { topProduct: null, totalQuantity: null, error: itemsError };
+    }
+
+    // Group invoice items by product and sum their quantities
+    const groupedByProduct = _.groupBy(invoiceItems, "product");
+    const productQuantities = _.mapValues(groupedByProduct, (items) =>
+      _.sumBy(items, "quantity")
+    );
+
+    // Find the product with the maximum quantity sold
+    topProduct = _.maxBy(
+      _.keys(productQuantities),
+      (product) => productQuantities[product]
+    );
+
+    if (topProduct !== null && topProduct !== undefined) {
+      totalQuantity = productQuantities[topProduct];
+    }
+  }
+
+  return { topProduct, totalQuantity, error: null };
+};
