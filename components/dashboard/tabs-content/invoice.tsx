@@ -19,11 +19,25 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import React, { useState } from "react";
+import { createInvoice } from "@/actions/createInvoice";
+import { useToast } from "@/components/ui/use-toast";
+import { Icons } from "@/components/ui/icons";
+
+import {
+  InvoiceData,
+  CustomerProfile,
+  InvoiceSummary,
+} from "@/actions/createInvoice";
 
 const schema = yup.object().shape({
   invoiceBy: yup.string().required("Invoice by is required"),
   customerName: yup.string().required("Customer Name is required"),
-  invoiceNumber: yup.string().notRequired(),
+  invoiceNumber: yup
+    .number()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue.trim() === "" ? null : value
+    ),
   companyName: yup.string().notRequired(),
   companyPhoneNumber: yup.number().notRequired(),
   companyAddress: yup.string().notRequired(),
@@ -37,11 +51,14 @@ const schema = yup.object().shape({
 });
 
 export function Invoice({ userprofile }: any) {
-  const [saleSummary, setSaleSummary] = useState();
+  const { toast } = useToast();
+
+  const [saleSummary, setSaleSummary] = useState({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const [invoiceTableKey, setInvoiceTableKey] = useState(0);
 
   const invoiceSalesSummary = (data: any) => {
     setSaleSummary(data);
-    console.log("invoice summary", data);
   };
 
   //Process Invoice Data
@@ -49,16 +66,52 @@ export function Invoice({ userprofile }: any) {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    let customerProfile = {};
+
     if (userprofile) {
-      data = { ...data, ...userprofile };
+      customerProfile = {
+        customerAddress: data.customerAddress || null,
+        customerName: data.customerName,
+        customerPhoneNumber: data.customerPhoneNumber || null,
+      };
     }
-    const completeInvoice = { ...data, invoiceSummary: saleSummary };
-    console.log("coneaf", completeInvoice);
+
+    const completeInvoice: InvoiceData = {
+      userProfile: userprofile,
+      customerProfile: customerProfile as CustomerProfile,
+      invoiceNumber: data.invoiceNumber,
+      invoiceBy: data.invoiceBy,
+      invoiceSummary: saleSummary as InvoiceSummary,
+    };
+
+    console.log("completeInvoice", completeInvoice);
+
+    const { error, success } = await createInvoice(completeInvoice);
+    console.log("sucess", success);
+    if (success) {
+      toast({
+        variant: "default",
+        title: "Sale Generated",
+        description: "Invoice has been successfully created.",
+      });
+      reset();
+      setInvoiceTableKey((prevKey) => prevKey + 1);
+    } else {
+      console.log(error);
+      toast({
+        variant: "default",
+        title: "Error",
+        description: "An error occurred while creating an inovice.",
+      });
+    }
+    setLoading(false);
   };
 
   return (
@@ -69,6 +122,7 @@ export function Invoice({ userprofile }: any) {
             <div className="grow">
               <Label htmlFor="invoice#">Invoice#</Label>
               <Input
+                type="number"
                 {...register("invoiceNumber")}
                 placeholder="Invoice Number"
               />
@@ -150,14 +204,23 @@ export function Invoice({ userprofile }: any) {
             />
           </div>
           <CardTitle>Sales Summary</CardTitle>
-          <InvoiceTable invoiceSalesSummary={invoiceSalesSummary} />
+          <InvoiceTable
+            key={invoiceTableKey}
+            invoiceSalesSummary={invoiceSalesSummary}
+          />
         </CardContent>
         <CardFooter className="justify-between space-x-2">
           <Link href="/">
             <Button variant="ghost">Cancel</Button>
           </Link>
 
-          <Button type="submit">Generate Sale</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Generate Sale"
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </form>

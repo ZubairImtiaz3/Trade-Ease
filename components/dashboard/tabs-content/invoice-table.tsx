@@ -131,11 +131,21 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
       }
 
       // Calculate Totals
-      const { totalDisc, totalAmount } = calculateTotals();
+      let totalDisc = 0;
+      let totalAmount = 0;
+
+      newData.forEach((item) => {
+        totalDisc += Number(item.disc);
+        totalAmount += item.amount;
+      });
+
       setTotals({ totalDisc, totalAmount });
 
-      const combinedDataAndTotals = { ...newData, Totals: totals };
-      invoiceSalesSummary(combinedDataAndTotals);
+      invoiceSalesSummary({
+        data: newData,
+        totals: { totalDisc, totalAmount },
+      });
+
       return newData;
     });
   };
@@ -275,24 +285,6 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
       },
     },
   ];
-
-  // Calculate total discount and amount
-  const calculateTotals = () => {
-    let totalDisc = 0;
-    let totalAmount = 0;
-
-    data.forEach((item) => {
-      totalDisc += Number(item.disc);
-      totalAmount += item.amount;
-    });
-
-    return { totalDisc, totalAmount };
-  };
-
-  useEffect(() => {
-    const { totalDisc, totalAmount } = calculateTotals();
-    setTotals({ totalDisc, totalAmount });
-  }, [data]);
 
   const table = useReactTable({
     data,
