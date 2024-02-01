@@ -21,6 +21,7 @@ import { ReportTable } from "@/components/dashboard/tabs-content/report-table";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import {
+  todayTopCustomer,
   totalTodayRevenue,
   totalTodaySales,
 } from "@/utils/client/dashboardOverview";
@@ -40,6 +41,9 @@ export default async function Index() {
 
   //Get the today total number of sales
   const { todaySalesNumber } = await totalTodaySales();
+
+  //Get the today top customer
+  const { topCustomer, maxTotalAmount } = await todayTopCustomer();
 
   return (
     <>
@@ -145,9 +149,12 @@ export default async function Index() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
+                  <div className="text-2xl font-bold">
+                    {topCustomer !== null ? topCustomer : ""}
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    +201 since last hour
+                    Total Amount Spent PKR
+                    {maxTotalAmount != null ? maxTotalAmount : ""}/-
                   </p>
                 </CardContent>
               </Card>
