@@ -1,13 +1,7 @@
-"use server";
-import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
 import { startOfDay, endOfDay } from "date-fns";
 import _ from "lodash";
 
-const cookieStore = cookies();
-const supabase = createClient(cookieStore);
-
-export const totalTodayInvoices = async () => {
+export const totalTodayInvoices = async (supabase: any) => {
   const todayStart = startOfDay(new Date());
   const todayEnd = endOfDay(new Date());
 
@@ -20,22 +14,22 @@ export const totalTodayInvoices = async () => {
   return { invoices, error };
 };
 
-export const totalTodayRevenue = async () => {
-  const { invoices, error } = await totalTodayInvoices();
+export const totalTodayRevenue = async (supabase: any) => {
+  const { invoices, error } = await totalTodayInvoices(supabase);
   let todaySale = _.sumBy(invoices, "total_amount");
 
   return { todaySale, error };
 };
 
-export const totalTodaySales = async () => {
-  const { invoices, error } = await totalTodayInvoices();
+export const totalTodaySales = async (supabase: any) => {
+  const { invoices, error } = await totalTodayInvoices(supabase);
   let todaySalesNumber = invoices?.length;
 
   return { todaySalesNumber, error };
 };
 
-export const todayTopCustomer = async () => {
-  const { invoices, error } = await totalTodayInvoices();
+export const todayTopCustomer = async (supabase: any) => {
+  const { invoices, error } = await totalTodayInvoices(supabase);
 
   // Group invoices by customer_name
   const groupedInvoices = _.groupBy(invoices, "customer_name");
@@ -61,8 +55,8 @@ export const todayTopCustomer = async () => {
   return { topCustomer, maxTotalAmount };
 };
 
-export const recentSales = async () => {
-  const { invoices, error } = await totalTodayInvoices();
+export const recentSales = async (supabase: any) => {
+  const { invoices, error } = await totalTodayInvoices(supabase);
   let recentSalesData = _.takeRight(invoices, 5);
 
   return { recentSalesData, error };
