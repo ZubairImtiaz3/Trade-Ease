@@ -20,26 +20,7 @@ import { Invoice } from "@/components/dashboard/tabs-content/invoice";
 import { ReportTable } from "@/components/dashboard/tabs-content/report-table";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import {
-  recentSales,
-  todayTopCustomer,
-  todayTopProduct,
-  totalTodayRevenue,
-  totalTodaySales,
-} from "@/utils/client/dashboardOverview";
-
-type RecentSalesDataType = {
-  id: string;
-  invoice_number: number;
-  invoice_by: string;
-  customer_name: string;
-  customer_address: string;
-  customer_phone_number: number;
-  user_id: string;
-  created_at: string;
-  total_amount: number;
-  total_discount: number;
-};
+import { DashboardData, fetchDashboardData } from "@/services/httpService";
 
 export default async function Index() {
   const cookieStore = cookies();
@@ -51,23 +32,12 @@ export default async function Index() {
 
   const userprofile = data && data[0] ? data[0] : null;
 
-  //Get the today revenue total amount
-  const { todaySale } = await totalTodayRevenue(supabase);
+  const overallMetrics: DashboardData | Error = await fetchDashboardData(
+    supabase
+  );
 
-  //Get the today total number of sales
-  const { todaySalesNumber } = await totalTodaySales(supabase);
-
-  //Get the today top customer
-  const { topCustomer, maxTotalAmount } = await todayTopCustomer(supabase);
-
-  //Get the recent sales
-  const { recentSalesData }: { recentSalesData: RecentSalesDataType[] } =
-    (await recentSales(supabase)) as {
-      recentSalesData: RecentSalesDataType[];
-    };
-
-  //Get the today top product
-  const { topProduct, totalQuantity } = await todayTopProduct(supabase);
+  const { revenue, salesNumber, topCustomer, recentSalesData, topProduct } =
+    overallMetrics;
 
   return (
     <>
@@ -119,7 +89,7 @@ export default async function Index() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    PKR {todaySale !== null ? todaySale : ""}/-
+                    PKR {revenue !== null ? revenue : ""}/-
                   </div>
                   <p className="text-xs text-muted-foreground">
                     +20.1% from last month
@@ -145,7 +115,7 @@ export default async function Index() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {todaySalesNumber !== null ? todaySalesNumber : ""}
+                    {salesNumber !== null ? salesNumber : ""}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     +19% from last month
@@ -174,11 +144,12 @@ export default async function Index() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {topCustomer !== null ? topCustomer : "None"}
+                    {topCustomer !== null ? topCustomer.name : "None"}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Total Amount Spent PKR
-                    {maxTotalAmount != null ? maxTotalAmount : ""}/-
+                    {topCustomer !== null ? topCustomer.maxTotalAmount : ""}
+                    /-
                   </p>
                 </CardContent>
               </Card>
@@ -203,12 +174,15 @@ export default async function Index() {
                 <CardContent>
                   <div className="text-2xl font-bold">
                     {topProduct
-                      ? topProduct.charAt(0).toUpperCase() + topProduct.slice(1)
+                      ? topProduct.name
+                        ? topProduct.name.charAt(0).toUpperCase() +
+                          (topProduct.name.slice(1) ?? "")
+                        : "None"
                       : "None"}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Total Quantity Sold&nbsp;
-                    {totalQuantity != null ? totalQuantity : ""}
+                    {topProduct ? topProduct.totalQuantity : ""}
                   </p>
                 </CardContent>
               </Card>

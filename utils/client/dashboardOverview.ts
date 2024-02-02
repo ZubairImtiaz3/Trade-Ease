@@ -1,36 +1,34 @@
-import { startOfDay, endOfDay } from "date-fns";
 import _ from "lodash";
 
-export const totalTodayInvoices = async (supabase: any) => {
-  const todayStart = startOfDay(new Date());
-  const todayEnd = endOfDay(new Date());
+export const totalInvoices = async (
+  supabase: any,
+  startDate?: Date,
+  endDate?: Date
+) => {
+  let query = supabase.from("invoices").select("*");
 
-  const { data: invoices, error } = await supabase
-    .from("invoices")
-    .select("*")
-    .gte("created_at", todayStart.toISOString())
-    .lt("created_at", todayEnd.toISOString());
+  if (startDate && endDate) {
+    query = query
+      .gte("created_at", startDate.toISOString())
+      .lt("created_at", endDate.toISOString());
+  }
+
+  const { data: invoices, error } = await query;
 
   return { invoices, error };
 };
 
-export const totalTodayRevenue = async (supabase: any) => {
-  const { invoices, error } = await totalTodayInvoices(supabase);
-  let todaySale = _.sumBy(invoices, "total_amount");
-
-  return { todaySale, error };
+export const totalRevenue = async (invoices: []) => {
+  let revenue = _.sumBy(invoices, "total_amount");
+  return revenue;
 };
 
-export const totalTodaySales = async (supabase: any) => {
-  const { invoices, error } = await totalTodayInvoices(supabase);
-  let todaySalesNumber = invoices?.length;
-
-  return { todaySalesNumber, error };
+export const totalSalesNumber = async (invoices: []) => {
+  let SalesNumber = invoices?.length;
+  return SalesNumber;
 };
 
-export const todayTopCustomer = async (supabase: any) => {
-  const { invoices, error } = await totalTodayInvoices(supabase);
-
+export const topCustomer = async (invoices: []) => {
   // Group invoices by customer_name
   const groupedInvoices = _.groupBy(invoices, "customer_name");
 
@@ -55,20 +53,12 @@ export const todayTopCustomer = async (supabase: any) => {
   return { topCustomer, maxTotalAmount };
 };
 
-export const recentSales = async (supabase: any) => {
-  const { invoices, error } = await totalTodayInvoices(supabase);
+export const recentSales = async (invoices: []) => {
   let recentSalesData = _.takeRight(invoices, 5);
-
-  return { recentSalesData, error };
+  return recentSalesData;
 };
 
-export const todayTopProduct = async (supabase: any) => {
-  const { invoices, error } = await totalTodayInvoices(supabase);
-
-  if (error) {
-    return { topProduct: null, totalQuantity: null, error };
-  }
-
+export const topProduct = async (supabase: any, invoices: []) => {
   let topProduct = null;
   let totalQuantity = 0;
 
@@ -101,5 +91,5 @@ export const todayTopProduct = async (supabase: any) => {
     }
   }
 
-  return { topProduct, totalQuantity, error: null };
+  return { topProduct, totalQuantity };
 };
