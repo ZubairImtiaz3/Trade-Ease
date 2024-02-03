@@ -133,10 +133,12 @@ export default async function Index() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {topCustomer !== null ? topCustomer.name : "None"}
+                    {topCustomer !== null && topCustomer?.name !== null
+                      ? topCustomer.name
+                      : "None"}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Total Amount Spent PKR
+                    Total Amount Spent PKR&nbsp;
                     {topCustomer !== null ? topCustomer.maxTotalAmount : ""}
                     /-
                   </p>
