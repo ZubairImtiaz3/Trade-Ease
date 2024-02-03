@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,13 +5,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/dashboard/overview";
 import { RecentSales } from "@/components/dashboard/recent-sales";
@@ -21,6 +13,7 @@ import { ReportTable } from "@/components/dashboard/tabs-content/report-table";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { DashboardData, fetchDashboardData } from "@/services/httpService";
+import SelectFilter from "@/components/dashboard/tabs-content/select-filter";
 
 export default async function Index() {
   const cookieStore = cookies();
@@ -39,27 +32,23 @@ export default async function Index() {
   const { revenue, salesNumber, topCustomer, recentSalesData, topProduct } =
     overallMetrics;
 
+  const handleDateChange = async ({
+    startDate,
+    endDate,
+  }: {
+    startDate: Date;
+    endDate: Date;
+  }) => {
+    "use server";
+    console.log("Date range changed:", startDate, endDate);
+  };
+
   return (
     <>
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <div className="hidden md:flex items-center space-x-2">
-            <div className="grid gap-2">
-              <Select defaultValue="daily">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weakly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button className="py">Download</Button>
-          </div>
+          <SelectFilter onDateChange={handleDateChange} />
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
