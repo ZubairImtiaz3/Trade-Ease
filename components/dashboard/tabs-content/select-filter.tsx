@@ -1,14 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import {
-  startOfDay,
-  endOfDay,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
-} from "date-fns";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -64,45 +56,6 @@ const SelectFilter: React.FC<SelectFilterProps> = ({ userprofile }) => {
       console.error("Error updating dashboard filter preference:", error);
     }
   };
-
-  const getStartDate = (): Date => {
-    const today = new Date();
-
-    switch (selectedInterval) {
-      case "daily":
-        return startOfDay(today);
-      case "weekly":
-        return startOfWeek(today);
-      case "monthly":
-        return startOfMonth(today);
-      default:
-        // For "All Time," return the minimum possible date
-        return new Date(0);
-    }
-  };
-
-  const getEndDate = (): Date => {
-    const today = new Date();
-
-    switch (selectedInterval) {
-      case "daily":
-        return endOfDay(today);
-      case "weekly":
-        return endOfWeek(today);
-      case "monthly":
-        return endOfMonth(today);
-      default:
-        // For "All Time," return the maximum possible date
-        return new Date("9999-12-31T23:59:59.999Z");
-    }
-  };
-
-  useEffect(() => {
-    const startDate = getStartDate();
-    const endDate = getEndDate();
-
-    console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
-  }, [selectedInterval, userprofile]);
 
   return (
     <div className="hidden md:flex items-center space-x-2">

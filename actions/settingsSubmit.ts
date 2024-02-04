@@ -87,6 +87,8 @@ export const updateDashboardFilterPreference = async ({
     .eq("id", user?.id)
     .select();
 
+     revalidatePath("/");
+
   return error;
 };
 
