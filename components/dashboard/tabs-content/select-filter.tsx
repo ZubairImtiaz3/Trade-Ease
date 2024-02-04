@@ -1,13 +1,5 @@
 "use client";
-import * as React from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   startOfDay,
   endOfDay,
@@ -16,32 +8,62 @@ import {
   startOfMonth,
   endOfMonth,
 } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-
-type DateChangeCallback = ({
-  startDate,
-  endDate,
-}: {
-  startDate: Date;
-  endDate: Date;
-}) => void;
+import { updateDashboardFilterPreference } from "@/actions/settingsSubmit";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SelectFilterProps {
-  onDateChange: DateChangeCallback;
+  userprofile: {
+    id: string;
+    dashboard_filter_preference?: string;
+  };
 }
 
-const SelectFilter: React.FC<SelectFilterProps> = ({ onDateChange }) => {
-  const [selectedInterval, setSelectedInterval] = useState("daily");
+const SelectFilter: React.FC<SelectFilterProps> = ({ userprofile }) => {
+  const { toast } = useToast();
 
-  const handleIntervalChange = (value: string) => {
+  const [selectedInterval, setSelectedInterval] = useState<string>(
+    userprofile?.dashboard_filter_preference || ""
+  );
+
+  // Update dashboard_filter_preference when selectedInterval changes
+  const handleIntervalChange = async (value: string) => {
     setSelectedInterval(value);
-  };
 
-  useEffect(() => {
-    const startDate = getStartDate();
-    const endDate = getEndDate();
-    onDateChange({ startDate, endDate });
-  }, [selectedInterval]);
+    try {
+      const error = await updateDashboardFilterPreference({
+        updateData: {
+          id: userprofile?.id,
+          dashboard_filter_preference: value,
+        },
+      });
+
+      if (error) {
+        toast({
+          variant: "default",
+          title: "Update Failed",
+          description: "An Error Occurred. Please try again later.",
+        });
+      } else {
+        toast({
+          variant: "default",
+          title: "Update Successful",
+          description: `Dashboard overview preference switched to ${
+            value.charAt(0).toUpperCase() + value.slice(1)
+          }`,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating dashboard filter preference:", error);
+    }
+  };
 
   const getStartDate = (): Date => {
     const today = new Date();
@@ -74,6 +96,13 @@ const SelectFilter: React.FC<SelectFilterProps> = ({ onDateChange }) => {
         return new Date("9999-12-31T23:59:59.999Z");
     }
   };
+
+  useEffect(() => {
+    const startDate = getStartDate();
+    const endDate = getEndDate();
+
+    console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
+  }, [selectedInterval, userprofile]);
 
   return (
     <div className="hidden md:flex items-center space-x-2">

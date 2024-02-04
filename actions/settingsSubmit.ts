@@ -9,6 +9,11 @@ interface FormData {
   company_phone: number;
 }
 
+interface UpdateDashboardFilterPreferenceData {
+  id: string;
+  dashboard_filter_preference: string;
+}
+
 const cookieStore = cookies();
 const supabase = createClient(cookieStore);
 
@@ -59,6 +64,30 @@ const settingsSubmit = async ({ formData }: { formData: FormData }) => {
 
     return updateError;
   }
+};
+
+export const updateDashboardFilterPreference = async ({
+  updateData,
+}: {
+  updateData: UpdateDashboardFilterPreferenceData;
+}) => {
+  // Get authenticated user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  console.log(user);
+
+  // Update dashboard_filter_preference
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({
+      dashboard_filter_preference: updateData.dashboard_filter_preference,
+    })
+    .eq("id", user?.id)
+    .select();
+
+  return error;
 };
 
 export default settingsSubmit;
