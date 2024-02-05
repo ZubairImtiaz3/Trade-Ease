@@ -49,8 +49,6 @@ export default async function Index() {
   //Get the last invoice number
   const { lastInvoiceNumber } = await InvoiceNumber(supabase);
 
-  console.log("lastInvoiceNumber", lastInvoiceNumber);
-
   return (
     <>
       <div className="flex-1 space-y-4 p-8 pt-6">
