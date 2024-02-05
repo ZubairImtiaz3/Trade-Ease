@@ -36,77 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-];
-
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Sales>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -130,37 +60,65 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "created_at",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => {
+      const rawDate = row.getValue("created_at") as string;
+      const formattedDate = new Date(rawDate).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      return <div>{formattedDate}</div>;
+    },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "invoice_number",
+    header: "Invoice Number",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("invoice_number")}</div>
+    ),
+  },
+  {
+    accessorKey: "customer_name",
+    header: "Customer Name",
+    cell: ({ row }) => <div>{row.getValue("customer_name")}</div>,
+  },
+  {
+    accessorKey: "invoice_by",
+    header: "Invoice By",
+    cell: ({ row }) => <div>{row.getValue("invoice_by")}</div>,
+  },
+  {
+    accessorKey: "total_discount",
+    header: "Discount",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const discount = parseFloat(row.getValue("total_discount") as string);
 
-      // Format the amount as a dollar amount
+      return <div className="text-center">{discount}</div>;
+    },
+  },
+  {
+    accessorKey: "total_amount",
+    header: () => <div className="text-right">Total Amount</div>,
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("total_amount"));
+
+      // Format the amount as a PKR amount
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
-        currency: "USD",
+        currency: "PKR",
+        minimumFractionDigits: 0,
       }).format(amount);
 
       return <div className="text-right font-medium">{formatted}</div>;
@@ -170,7 +128,7 @@ export const columns: ColumnDef<Payment>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const invoice = row.original;
 
       return (
         <DropdownMenu>
@@ -183,13 +141,13 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(invoice.id)}
             >
-              Copy payment ID
+              Copy Invoice ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View invoice details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -197,7 +155,24 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function ReportTable() {
+type Sales = {
+  id: string;
+  invoice_number: number;
+  invoice_by: string;
+  customer_name: string;
+  customer_address: string;
+  customer_phone_number: number;
+  user_id: string;
+  created_at: string;
+  total_amount: number;
+  total_discount: number;
+};
+
+interface Ivoices {
+  invoices: Sales[];
+}
+
+export function ReportTable({ invoices }: Ivoices) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -206,8 +181,16 @@ export function ReportTable() {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  // Sort the invoices array initially
+  const sortedInvoices = React.useMemo(() => {
+    return [...invoices].sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  }, [invoices]);
+
   const table = useReactTable({
-    data,
+    data: sortedInvoices,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -229,10 +212,12 @@ export function ReportTable() {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter customer names..."
+          value={
+            (table.getColumn("customer_name")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("customer_name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

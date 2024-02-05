@@ -76,8 +76,6 @@ export const updateDashboardFilterPreference = async ({
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user);
-
   // Update dashboard_filter_preference
   const { data, error } = await supabase
     .from("profiles")

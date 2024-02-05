@@ -15,6 +15,7 @@ import { createClient } from "@/utils/supabase/server";
 import { DashboardData, fetchDashboardData } from "@/services/httpService";
 import SelectFilter from "@/components/dashboard/tabs-content/select-filter";
 import { getEndDate, getStartDate } from "@/utils/client/dateUtlis";
+import { totalInvoices } from "@/utils/client/dashboardOverview";
 
 export default async function Index() {
   const cookieStore = cookies();
@@ -27,7 +28,7 @@ export default async function Index() {
   const userprofile = data && data[0] ? data[0] : null;
 
   // Get the interval from profile
-  const selectedInterval = userprofile.dashboard_filter_preference;
+  const selectedInterval = userprofile?.dashboard_filter_preference;
 
   // Calculate start and end dates based on user's preference
   const startDate = getStartDate(selectedInterval);
@@ -41,6 +42,9 @@ export default async function Index() {
 
   const { revenue, salesNumber, topCustomer, recentSalesData, topProduct } =
     overallMetrics;
+
+  //Get the reports data
+  const { invoices } = await totalInvoices(supabase);
 
   return (
     <>
@@ -203,7 +207,7 @@ export default async function Index() {
             <Invoice userprofile={userprofile} />
           </TabsContent>
           <TabsContent value="reports" className="space-y-4">
-            <ReportTable />
+            <ReportTable invoices={invoices} />
           </TabsContent>
         </Tabs>
       </div>
