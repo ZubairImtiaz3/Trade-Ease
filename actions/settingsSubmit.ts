@@ -4,9 +4,15 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-interface FormData {
+interface FormDataOnBoard {
   first_name: string;
   last_name: string;
+  company_name: string;
+  company_address: string;
+  company_phone: number;
+}
+
+interface FormData {
   company_name: string;
   company_address: string;
   company_phone: number;
@@ -29,7 +35,11 @@ export const getProfile = async () => {
   return data;
 };
 
-export const onBoardSubmit = async ({ formData }: { formData: FormData }) => {
+export const onBoardSubmit = async ({
+  formData,
+}: {
+  formData: FormDataOnBoard;
+}) => {
   // Get authenticated user
   const {
     data: { user },
@@ -51,7 +61,7 @@ export const onBoardSubmit = async ({ formData }: { formData: FormData }) => {
       .select();
 
     revalidatePath("/");
-    
+
     return error;
   }
   redirect("/");

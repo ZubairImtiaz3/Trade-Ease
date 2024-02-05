@@ -16,11 +16,15 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 
-interface UserNav {
-  user: { email?: string; user_metadata?: { name?: string } } | null;
-}
 
-export function UserNav({ user }: UserNav) {
+export function UserNav({
+  userEmail,
+  userName,
+}: {
+  userEmail: string | undefined;
+  userName: string | null;
+}) {
+  console.log(userEmail);
   const { toast } = useToast();
 
   const handleSignOut = async () => {
@@ -51,7 +55,7 @@ export function UserNav({ user }: UserNav) {
           <Avatar className="h-8 w-8">
             <AvatarImage src="/" alt="Avatar" />
             <AvatarFallback>
-              {user?.user_metadata?.name
+              {userName
                 ?.split(" ")
                 .map((word: any) => word[0])
                 .join("")}
@@ -62,11 +66,9 @@ export function UserNav({ user }: UserNav) {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {user?.user_metadata?.name}
-            </p>
+            <p className="text-sm font-medium leading-none">{userName}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user?.email}
+              {userEmail}
             </p>
           </div>
         </DropdownMenuLabel>

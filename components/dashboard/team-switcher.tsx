@@ -13,10 +13,13 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 >;
 
 interface TeamSwitcherProps extends PopoverTriggerProps {
-  user: { user_metadata?: { name?: string } } | null;
+  userName: string | null;
 }
 
-export default function TeamSwitcher({ className, user }: TeamSwitcherProps) {
+export default function TeamSwitcher({
+  className,
+  userName,
+}: TeamSwitcherProps) {
   return (
     <Dialog>
       <Popover>
@@ -27,7 +30,7 @@ export default function TeamSwitcher({ className, user }: TeamSwitcherProps) {
             aria-label="Select a team"
             className={cn("w-[200px] justify-between", className)}
           >
-            {user?.user_metadata?.name}
+            {userName}
             <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
