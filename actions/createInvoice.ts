@@ -40,7 +40,6 @@ export interface UserProfile {
 export interface InvoiceData {
   userProfile: UserProfile;
   customerProfile: CustomerProfile;
-  invoiceNumber: number;
   invoiceBy: string;
   invoiceSummary: InvoiceSummary;
 }
@@ -61,7 +60,6 @@ export const createInvoice = async (invoiceData: InvoiceData) => {
     .from("invoices")
     .insert([
       {
-        invoice_number: invoiceData.invoiceNumber,
         invoice_by: invoiceData.invoiceBy,
         customer_name: invoiceData.customerProfile.customerName,
         customer_address: invoiceData.customerProfile.customerAddress,

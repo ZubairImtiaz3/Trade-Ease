@@ -15,7 +15,7 @@ import { createClient } from "@/utils/supabase/server";
 import { DashboardData, fetchDashboardData } from "@/services/httpService";
 import SelectFilter from "@/components/dashboard/tabs-content/select-filter";
 import { getEndDate, getStartDate } from "@/utils/client/dateUtlis";
-import { totalInvoices } from "@/utils/client/dashboardOverview";
+import { InvoiceNumber, totalInvoices } from "@/utils/client/dashboardOverview";
 
 export default async function Index() {
   const cookieStore = cookies();
@@ -45,6 +45,11 @@ export default async function Index() {
 
   //Get the reports data
   const { invoices } = await totalInvoices(supabase);
+
+  //Get the last invoice number
+  const { lastInvoiceNumber } = await InvoiceNumber(supabase);
+
+  console.log("lastInvoiceNumber", lastInvoiceNumber);
 
   return (
     <>
@@ -204,7 +209,10 @@ export default async function Index() {
             </div>
           </TabsContent>
           <TabsContent value="invoice" className="space-y-4">
-            <Invoice userprofile={userprofile} />
+            <Invoice
+              lastInvoiceNumber={lastInvoiceNumber}
+              userprofile={userprofile}
+            />
           </TabsContent>
           <TabsContent value="reports" className="space-y-4">
             <ReportTable invoices={invoices} />

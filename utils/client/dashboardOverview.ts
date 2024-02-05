@@ -93,3 +93,25 @@ export const topProduct = async (supabase: any, invoices: []) => {
 
   return { topProduct, totalQuantity };
 };
+
+export const InvoiceNumber = async (supabase: any) => {
+  try {
+    const { data: invoices, error } = await supabase
+      .from("invoices")
+      .select("invoice_number")
+      .order("invoice_number", { ascending: false })
+      .limit(1);
+
+    if (error) {
+      throw error;
+    }
+
+    // Extract the last invoice number from the result
+    const lastInvoiceNumber =
+      invoices && invoices.length > 0 ? invoices[0].invoice_number : null;
+
+    return { lastInvoiceNumber, error: null };
+  } catch (error) {
+    return { lastInvoiceNumber: null, error };
+  }
+};

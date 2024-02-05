@@ -32,12 +32,6 @@ import {
 const schema = yup.object().shape({
   invoiceBy: yup.string().required("Invoice by is required"),
   customerName: yup.string().required("Customer Name is required"),
-  invoiceNumber: yup
-    .number()
-    .nullable()
-    .transform((value, originalValue) =>
-      originalValue.trim() === "" ? null : value
-    ),
   companyName: yup.string().notRequired(),
   companyPhoneNumber: yup.number().notRequired(),
   companyAddress: yup.string().notRequired(),
@@ -50,7 +44,8 @@ const schema = yup.object().shape({
   customerAddress: yup.string().notRequired(),
 });
 
-export function Invoice({ userprofile }: any) {
+export function Invoice({ userprofile, lastInvoiceNumber }: any) {
+  let nextInvoiceNumber = lastInvoiceNumber ? lastInvoiceNumber + 1 : null;
   const { toast } = useToast();
 
   const [saleSummary, setSaleSummary] = useState({});
@@ -86,7 +81,6 @@ export function Invoice({ userprofile }: any) {
     const completeInvoice: InvoiceData = {
       userProfile: userprofile,
       customerProfile: customerProfile as CustomerProfile,
-      invoiceNumber: data.invoiceNumber,
       invoiceBy: data.invoiceBy,
       invoiceSummary: saleSummary as InvoiceSummary,
     };
@@ -122,8 +116,9 @@ export function Invoice({ userprofile }: any) {
             <div className="grow">
               <Label htmlFor="invoice#">Invoice#</Label>
               <Input
+                disabled={lastInvoiceNumber !== null}
+                value={nextInvoiceNumber}
                 type="number"
-                {...register("invoiceNumber")}
                 placeholder="Invoice Number"
               />
             </div>
