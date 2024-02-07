@@ -1,4 +1,10 @@
 "use client";
+import {
+  InvoiceData,
+  CustomerProfile,
+  InvoiceSummary,
+} from "@/actions/createInvoice";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -23,13 +29,8 @@ import { createInvoice } from "@/actions/createInvoice";
 import { useToast } from "@/components/ui/use-toast";
 import { Icons } from "@/components/ui/icons";
 import jsPDFInvoiceTemplate, { OutputType } from "jspdf-invoice-template";
-
-import {
-  InvoiceData,
-  CustomerProfile,
-  InvoiceSummary,
-} from "@/actions/createInvoice";
 import { PdfConfirm } from "./pdfConfirmation";
+import { getInvoiceProps, Props } from "@/utils/client/invoiceProps";
 
 const schema = yup.object().shape({
   invoiceBy: yup.string().required("Invoice by is required"),
@@ -54,8 +55,7 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
   const [loading, setLoading] = useState<boolean>(false);
   const [invoiceTableKey, setInvoiceTableKey] = useState(0);
   const [isPdfConfirmOpen, setPdfConfirmOpen] = useState(false);
-  const [printPdf, setPrintPdf] = useState(false);
-  const [isInitialSubmit, setIsInitialSubmit] = useState(false);
+  const [printPdf, setPrintPdf] = useState(true);
 
   const handlePdfConfirmOpen = () => {
     setPdfConfirmOpen(true);
@@ -67,7 +67,6 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
   };
 
   const handleYesPdfClick = async () => {
-    console.log("yes");
     setPrintPdf(true);
   };
 
@@ -87,7 +86,6 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    const pdfResponse = await handlePdfConfirmOpen();
 
     let customerProfile = {};
 
@@ -108,68 +106,14 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
 
     // Filter out the items with an empty product field
     const filteredData = completeInvoice.invoiceSummary.data.filter(
-      (item) => item.product !== ""
+      (item) => item.product !== "" && item.size !== ""
     );
 
     completeInvoice.invoiceSummary.data = filteredData;
 
     console.log("completeInvoice", completeInvoice);
 
-    const props = {
-      outputType: OutputType.Save,
-      fileName: `Invoice_${
-        completeInvoice.customerProfile.customerName
-      }_${new Date().toISOString().slice(0, 10)}`,
-      orientationLandscape: false,
-      logo: {
-        src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png",
-        width: 53.33,
-        height: 26.66,
-      },
-      business: {
-        name: completeInvoice.userProfile.company_name,
-        address: completeInvoice.userProfile.company_address,
-        phone: `${completeInvoice.userProfile.company_phone.toString()}`,
-        email: "",
-        email_1: "",
-        website: "",
-      },
-      contact: {
-        label: "Invoice issued for:",
-        name: completeInvoice.customerProfile.customerName,
-        address: completeInvoice.customerProfile.customerAddress!,
-        phone: completeInvoice.customerProfile.customerPhoneNumber?.toString()!,
-        email: "",
-        otherInfo: "",
-      },
-      invoice: {
-        label: "Invoice #: ",
-        invTotalLabel: "Total:",
-        num: nextInvoiceNumber,
-        invDate: `Payment Date: ${new Date().toLocaleString()}`,
-        invGenDate: `Invoice Date: ${new Date().toLocaleString()}`,
-        header: ["#", "Description", "Price", "Quantity", "Unit", "Total"],
-        headerBorder: true,
-        tableBodyBorder: true,
-        table: completeInvoice.invoiceSummary.data.map((item, index) => ({
-          num: index + 1,
-          desc: item.product,
-          price: item.amount,
-          quantity: item.quantity,
-          unit: item.size,
-          total: `${item.amount}/-`,
-        })),
-        invTotal: `${completeInvoice.invoiceSummary.totals.totalAmount.toString()}/-`,
-        invCurrency: "PKR",
-        invDescLabel: "Invoice Note",
-        invDesc: "Your invoice note goes here.",
-      },
-      footer: {
-        text: "The invoice is created on a computer and is valid without the signature and stamp.",
-      },
-      pageEnable: true,
-      pageLabel: "Page ",
-    };
+    const props: Props = getInvoiceProps(completeInvoice, nextInvoiceNumber);
 
     const { error, success } = await createInvoice(completeInvoice);
     console.log("sucess", success);
@@ -183,11 +127,6 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
       if (printPdf) {
         // If user wants to print, generate PDF
         const pdfObject = jsPDFInvoiceTemplate(props);
-        toast({
-          variant: "default",
-          title: "PDF Generated",
-          description: "PDF has been successfully generated.",
-        });
         console.log(pdfObject);
         reset();
         setInvoiceTableKey((prevKey) => prevKey + 1);
