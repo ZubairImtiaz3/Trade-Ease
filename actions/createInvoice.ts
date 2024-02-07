@@ -71,8 +71,6 @@ export const createInvoice = async (invoiceData: InvoiceData) => {
     ])
     .select();
 
-  console.log("createdInvoice", insertedInvoice);
-
   if (invoiceError) {
     return { error: invoiceError };
   }

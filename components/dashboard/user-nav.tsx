@@ -24,7 +24,7 @@ export function UserNav({
   userEmail: string | undefined;
   userName: string | null;
 }) {
-  console.log(userEmail);
+
   const { toast } = useToast();
 
   const handleSignOut = async () => {
