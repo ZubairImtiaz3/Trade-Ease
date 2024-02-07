@@ -103,16 +103,16 @@ export const getInvoiceProps = (
       num: nextInvoiceNumber,
       invDate: `Payment Date: ${new Date().toLocaleString()}`,
       invGenDate: `Invoice Date: ${new Date().toLocaleString()}`,
-      header: ["#", "Description", "Price", "Quantity", "Unit", "Total"],
+      header: ["#", "Product", "Size", "Quantity", "Product", "Total"],
       headerBorder: true,
       tableBodyBorder: true,
       table: completeInvoice.invoiceSummary.data.map(
         (item: any, index: number) => ({
           num: index + 1,
           desc: item.product,
-          price: item.amount,
-          quantity: item.quantity,
           unit: item.size,
+          quantity: item.quantity,
+          price: item.amount,
           total: `${item.amount}/-`,
         })
       ),
