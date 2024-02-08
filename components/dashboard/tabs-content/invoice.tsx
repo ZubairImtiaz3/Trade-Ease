@@ -28,9 +28,7 @@ import React, { useState } from "react";
 import { createInvoice } from "@/actions/createInvoice";
 import { useToast } from "@/components/ui/use-toast";
 import { Icons } from "@/components/ui/icons";
-import jsPDFInvoiceTemplate, { OutputType } from "jspdf-invoice-template";
 import { PdfConfirm } from "./pdfConfirmation";
-import { getInvoiceProps, Props } from "@/utils/client/invoiceProps";
 
 const schema = yup.object().shape({
   invoiceBy: yup.string().required("Invoice by is required"),
@@ -55,19 +53,13 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
   const [loading, setLoading] = useState<boolean>(false);
   const [invoiceTableKey, setInvoiceTableKey] = useState(0);
   const [isPdfConfirmOpen, setPdfConfirmOpen] = useState(false);
-  const [printPdf, setPrintPdf] = useState(true);
 
   const handlePdfConfirmOpen = () => {
     setPdfConfirmOpen(true);
   };
 
   const handlePdfConfirmClose = () => {
-    setPrintPdf(false);
     setPdfConfirmOpen(false);
-  };
-
-  const handleYesPdfClick = async () => {
-    setPrintPdf(true);
   };
 
   const invoiceSalesSummary = (data: any) => {
@@ -113,24 +105,17 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
 
     console.log("completeInvoice", completeInvoice);
 
-    const props: Props = getInvoiceProps(completeInvoice, nextInvoiceNumber);
-
     const { error, success } = await createInvoice(completeInvoice);
-    console.log("sucess", success);
+
     if (success) {
       toast({
         variant: "default",
         title: "Sale Generated",
         description: "Invoice has been successfully created.",
       });
-
-      if (printPdf) {
-        // If user wants to print, generate PDF
-        const pdfObject = jsPDFInvoiceTemplate(props);
-        console.log(pdfObject);
-        reset();
-        setInvoiceTableKey((prevKey) => prevKey + 1);
-      }
+      reset();
+      setInvoiceTableKey((prevKey) => prevKey + 1);
+      handlePdfConfirmOpen();
     } else {
       console.log(error);
       toast({
@@ -258,11 +243,7 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
         </Card>
       </form>
 
-      <PdfConfirm
-        isOpen={isPdfConfirmOpen}
-        onClose={handlePdfConfirmClose}
-        onYesClick={handleYesPdfClick}
-      />
+      <PdfConfirm isOpen={isPdfConfirmOpen} onClose={handlePdfConfirmClose} />
     </>
   );
 }

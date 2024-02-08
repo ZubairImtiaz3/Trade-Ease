@@ -11,22 +11,9 @@ import {
 interface PdfConfirmProps {
   isOpen: boolean;
   onClose: () => void;
-  onYesClick: () => void;
 }
 
-export function PdfConfirm({ isOpen, onClose, onYesClick }: PdfConfirmProps) {
-  const handleYesClick = async () => {
-    return new Promise((resolve) => {
-      onYesClick();
-      resolve(true);
-    });
-  };
-
-  const handleNoClick = () => {
-    onClose();
-    return Promise.resolve(false);
-  };
-
+export function PdfConfirm({ isOpen, onClose }: PdfConfirmProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -37,8 +24,8 @@ export function PdfConfirm({ isOpen, onClose, onYesClick }: PdfConfirmProps) {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-4">
-          <Button onClick={handleNoClick}>No</Button>
-          <Button type="button" onClick={() => handleYesClick().then(onClose)}>
+          <Button onClick={onClose}>No</Button>
+          <Button type="button" onClick={() => {}}>
             Yes
           </Button>
         </DialogFooter>
