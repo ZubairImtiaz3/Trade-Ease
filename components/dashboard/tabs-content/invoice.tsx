@@ -243,7 +243,11 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
         </Card>
       </form>
 
-      <PdfConfirm isOpen={isPdfConfirmOpen} onClose={handlePdfConfirmClose} />
+      <PdfConfirm
+        userProfile={userprofile}
+        isOpen={isPdfConfirmOpen}
+        onClose={handlePdfConfirmClose}
+      />
     </>
   );
 }
