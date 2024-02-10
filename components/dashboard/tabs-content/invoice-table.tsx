@@ -26,9 +26,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-
 import { v4 as uuidv4 } from "uuid";
 import { products, ProductDetails } from "@/utils/client/productDetails";
+import { formatedCurrency } from "@/utils/client/basicUtlis";
 
 // Define a map for product details
 const productDetailsMap: Record<string, ProductDetails> = products;
@@ -241,8 +241,8 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
         return (
           <Input
             className="max-w-[10rem]"
-            type="number"
-            value={amount}
+            type="text"
+            value={amount.toLocaleString()}
             readOnly
           />
         );
@@ -319,8 +319,8 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
           <Input
             id="total-amount"
             className="max-w-[10rem]"
-            type="number"
-            value={totals.totalAmount}
+            type="text"
+            value={`${formatedCurrency(totals.totalAmount, "PKR")}/-`}
             readOnly
             placeholder="Total Sale Amount"
           />

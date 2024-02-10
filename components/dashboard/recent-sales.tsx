@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { formatedCurrency } from "@/utils/client/basicUtlis";
 
 type RecentSalesProps = {
   recentSales: Array<{
@@ -41,7 +42,10 @@ export function RecentSales({ recentSales }: RecentSalesProps) {
                 </p>
               </div>
             </div>
-            <div className="sm:ml-auto font-medium mt-2">{`+PKR ${sale.total_amount}`}</div>
+            <div className="sm:ml-auto font-medium mt-2">{`+${formatedCurrency(
+              sale.total_amount,
+              "PKR"
+            )}`}</div>
           </div>
         ))
       ) : (

@@ -16,6 +16,7 @@ import { DashboardData, fetchDashboardData } from "@/services/httpService";
 import SelectFilter from "@/components/dashboard/tabs-content/select-filter";
 import { getEndDate, getStartDate } from "@/utils/client/dateUtlis";
 import { InvoiceNumber, totalInvoices } from "@/utils/client/dashboardOverview";
+import { formatedCurrency } from "@/utils/client/basicUtlis";
 
 export default async function Index() {
   const cookieStore = cookies();
@@ -84,7 +85,7 @@ export default async function Index() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    PKR {revenue !== null ? revenue : ""}/-
+                    {formatedCurrency(revenue, "PKR")}/-
                   </div>
                   <p className="text-xs text-muted-foreground">
                     +20.1% from last month
@@ -145,7 +146,9 @@ export default async function Index() {
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Total Amount Spent PKR&nbsp;
-                    {topCustomer !== null ? topCustomer.maxTotalAmount : ""}
+                    {topCustomer !== null
+                      ? formatedCurrency(topCustomer.maxTotalAmount, "PKR")
+                      : ""}
                     /-
                   </p>
                 </CardContent>
