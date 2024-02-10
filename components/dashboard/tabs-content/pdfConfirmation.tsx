@@ -33,10 +33,6 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
       const invoice = result?.invoice;
       const invoiceItems = result?.invoiceItems;
 
-      const totalDiscount = invoiceItems?.reduce(
-        (acc, item) => acc + parseFloat(item.discount),
-        0
-      );
       const subtotal = invoiceItems?.reduce(
         (acc, item) =>
           acc + (parseFloat(item.amount) - parseFloat(item.discount)),
@@ -90,8 +86,8 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
         contact: {
           label: "Invoice issued for:",
           name: `${invoice.customer_name}`,
-          address: `${invoice.customer_address}`,
-          phone: `${invoice.customer_phone}`,
+          address: `${invoice.customer_address ?? ""}`,
+          phone: `${invoice.customer_phone ?? ""}`,
           email: "client@website.al",
           otherInfo: "www.website.al",
         },
@@ -133,13 +129,13 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
             `${item.square_ft}ft`,
             item.quantity,
             item.amount,
-            item.disc,
+            item.discount,
             parseFloat(item.amount) - parseFloat(item.discount),
           ]),
           additionalRows: [
             {
               col1: "Total:",
-              col2: invoice.total_amount,
+              col2: String(invoice.total_amount),
               col3: "PkR",
               style: {
                 fontSize: 14,
@@ -147,14 +143,14 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
             },
             {
               col1: "Disc:",
-              col2: totalDiscount.toFixed(2),
+              col2: String(invoice.total_discount.toFixed(2)),
               style: {
                 fontSize: 10,
               },
             },
             {
               col1: "SubTotal:",
-              col2: subtotal.toFixed(2),
+              col2: String(subtotal.toFixed(2)),
               col3: "PKR",
               style: {
                 fontSize: 10,
@@ -172,8 +168,9 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
         pageLabel: "Page ",
       };
 
+      console.log("PDF Properties", props);
+
       const pdf = jsPDFInvoiceTemplate(props);
-      console.log("PDF", pdf);
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {
@@ -193,7 +190,6 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
         </DialogHeader>
         <DialogFooter className="gap-4">
           <Button onClick={onClose}>No</Button>
-          <Button>sdsad</Button>
           <Button type="button" onClick={handleYesClick} disabled={loading}>
             {loading ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
