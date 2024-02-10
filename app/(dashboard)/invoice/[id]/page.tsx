@@ -1,5 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { InvoiceDetails } from "@/components/dashboard/tabs-content/invoice-details";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const InvoiceDetailsPage = async ({ params }: { params: { id: string } }) => {
   const cookieStore = cookies();
@@ -11,11 +16,7 @@ const InvoiceDetailsPage = async ({ params }: { params: { id: string } }) => {
     .select("*")
     .eq("invoice_id", params.id);
 
-  console.log(invoiceItems);
-
   const invoiceId = invoiceItems?.[0]?.invoice_id ?? null;
-
-  console.log(invoiceId);
 
   //Get Invoice
   const { data: invoice } = await supabase
@@ -23,12 +24,93 @@ const InvoiceDetailsPage = async ({ params }: { params: { id: string } }) => {
     .select()
     .eq("id", invoiceId);
 
-  console.log(invoice);
+  const invoiceData = invoice?.[0] || {};
+  const createdAt = invoiceData.created_at || "";
+
+  // Format the date as "MM/DD/YYYY"
+  const dateObj = new Date(createdAt);
+  const formattedDate = `${(dateObj.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}/${dateObj
+    .getDate()
+    .toString()
+    .padStart(2, "0")}/${dateObj.getFullYear()}`;
+
   return (
     <div>
-      <h1>Invoice Details for ID: {params.id}</h1>
+      <h2 className="text-3xl font-bold tracking-tight pb-6 pt-6">
+        Invoice Details
+      </h2>
+      <Card>
+        <CardHeader>
+          <div className="flex gap-4 justify-between flex-wrap items-baseline">
+            <div className="grow">
+              <Label>Invoice#</Label>
+              <Input
+                value={invoiceData.invoice_number || "Not Available"}
+                type="number"
+                placeholder="Invoice Number"
+                readOnly
+              />
+            </div>
+            <div className="grow">
+              <Label>Invoice By</Label>
+              <Input
+                value={invoiceData.invoice_by || "Not Available"}
+                placeholder="Invoicer's Name"
+                readOnly
+              />
+            </div>
+            <div className="flex flex-col justify-end gap-1 grow">
+              <Label>Date</Label>
+              <Input
+                value={formattedDate || "Not Available"}
+                placeholder="Date"
+                readOnly
+              />
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="flex flex-col gap-6">
+          <div className="flex gap-4 items-baseline flex-wrap">
+            <div className="grow">
+              <Label>Name</Label>
+              <Input
+                id="subject"
+                value={invoiceData.customer_name || "Not Available"}
+                placeholder="Customer's Name"
+                readOnly
+              />
+            </div>
+            <div className="grow">
+              <Label>Phone Number</Label>
+              <Input
+                type="text"
+                value={invoiceData.customer_phone_number || "Not Available"}
+                placeholder="Customer's Phone"
+                readOnly
+              />
+            </div>
+          </div>
+          <div>
+            <Label>Address</Label>
+            <Textarea
+              value={
+                invoiceData.customer_address ||
+                "Customer's Address Not Available"
+              }
+              placeholder="Customer's Address"
+              readOnly
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <InvoiceDetails />
     </div>
   );
 };
 
 export default InvoiceDetailsPage;
+
