@@ -40,17 +40,47 @@ type ProductDetails = {
 
 // Define a map for product details
 const productDetailsMap: Record<string, ProductDetails> = {
-  team: {
+  "HAJVERY ORTHO PLUS DREAM STAR WAKEFIT JAPAN GHAZI (HARD)": {
     details: [
-      { size: "small", squareFt: "100", amount: "10000" },
-      { size: "medium", squareFt: "200", amount: "20000" },
-      { size: "large", squareFt: "300", amount: "30000" },
-    ],
-  },
-  billing: {
-    details: [
-      { size: "small", squareFt: "150", amount: "15000" },
-      { size: "medium", squareFt: "250", amount: "25000" },
+      { size: "78 X 72 X 8", squareFt: "1", amount: "25900" },
+      { size: "78 X 66 X 8", squareFt: "2", amount: "23760" },
+      { size: "78 X 60 X 8", squareFt: "3", amount: "21590" },
+      { size: "78 X 48 X 8", squareFt: "4", amount: "17280" },
+      { size: "78 X 42 X 8", squareFt: "5", amount: "15110" },
+      { size: "78 X 39 X 8", squareFt: "6", amount: "14050" },
+      { size: "78 X 36 X 8", squareFt: "7", amount: "12950" },
+      { size: "72 X 36 X 8", squareFt: "8", amount: "12130" },
+      { size: "72 X 30 X 8", squareFt: "9", amount: "10360" },
+      { size: "72 X 26 X 8", squareFt: "10", amount: "9400" },
+      { size: "70 X 36 X 8", squareFt: "11", amount: "11850" },
+      { size: "70 X 30 X 8", squareFt: "12", amount: "10080" },
+      { size: "70 X 26 X 8", squareFt: "13", amount: "9140" },
+      { size: "78 X 72 X 7", squareFt: "14", amount: "22660" },
+      { size: "78 X 66 X 7", squareFt: "15", amount: "20790" },
+      { size: "78 X 60 X 7", squareFt: "16", amount: "18890" },
+      { size: "78 X 48 X 7", squareFt: "17", amount: "15110" },
+      { size: "78 X 42 X 7", squareFt: "18", amount: "13240" },
+      { size: "78 X 39 X 7", squareFt: "19", amount: "12290" },
+      { size: "78 X 36 X 7", squareFt: "20", amount: "11340" },
+      { size: "72 X 36 X 7", squareFt: "21", amount: "10470" },
+      { size: "72 X 30 X 7", squareFt: "22", amount: "9040" },
+      { size: "72 X 26 X 7", squareFt: "23", amount: "8040" },
+      { size: "70 X 36 X 7", squareFt: "24", amount: "10340" },
+      { size: "70 X 30 X 7", squareFt: "25", amount: "8900" },
+      { size: "70 X 26 X 7", squareFt: "26", amount: "7900" },
+      { size: "78 X 76 X 6", squareFt: "27", amount: "19430" },
+      { size: "78 X 76 X 6", squareFt: "28", amount: "17830" },
+      { size: "78 X 76 X 6", squareFt: "29", amount: "16200" },
+      { size: "78 X 76 X 6", squareFt: "30", amount: "12950" },
+      { size: "78 X 76 X 6", squareFt: "31", amount: "11340" },
+      { size: "78 X 76 X 6", squareFt: "32", amount: "10550" },
+      { size: "78 X 76 X 6", squareFt: "33", amount: "9720" },
+      { size: "72 X 36 X 6", squareFt: "34", amount: "9200" },
+      { size: "72 X 30 X 6", squareFt: "35", amount: "7880" },
+      { size: "72 X 26 X 6", squareFt: "37", amount: "7090" },
+      { size: "70 X 36 X 6", squareFt: "38", amount: "9080" },
+      { size: "70 X 30 X 6", squareFt: "39", amount: "7730" },
+      { size: "70 X 26 X 6", squareFt: "40", amount: "6950" },
     ],
   },
   // Add more products as needed
@@ -208,30 +238,16 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
       accessorKey: "squareft",
       header: "Square Ft",
       cell: ({ row }) => {
-        const product = row.original.product;
-        const squareFts = product
-          ? productDetailsMap[product]?.details.map(
-              (detail) => detail.squareFt
-            ) || []
-          : [];
         return (
-          <Select
-            defaultValue={row.original.squareft}
-            onValueChange={(newSquareFt) =>
-              handleValueChange(row.original.id, newSquareFt, "squareft")
+          <Input
+            className="max-w-[5rem]"
+            readOnly
+            type="number"
+            value={row.original.squareft}
+            onChange={(e) =>
+              handleValueChange(row.original.id, e.target.value, "squareft")
             }
-          >
-            <SelectTrigger id={`squareft-select-${row.id}`}>
-              <SelectValue placeholder="Select square ft" />
-            </SelectTrigger>
-            <SelectContent>
-              {squareFts.map((squareFt) => (
-                <SelectItem key={squareFt} value={squareFt}>
-                  {squareFt}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          />
         );
       },
     },
@@ -274,11 +290,12 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
           (detail) => detail.size === row.original.size
         );
         const amount = detail ? Number(detail.amount) * quantity : 0; // Calculate amount based on quantity
+
         return (
           <Input
             className="max-w-[10rem]"
             type="number"
-            value={amount.toString()}
+            value={amount}
             readOnly
           />
         );
