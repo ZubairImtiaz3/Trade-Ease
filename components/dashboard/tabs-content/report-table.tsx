@@ -36,124 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export const columns: ColumnDef<Sales>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "created_at",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const rawDate = row.getValue("created_at") as string;
-      const formattedDate = new Date(rawDate).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-      return <div>{formattedDate}</div>;
-    },
-  },
-  {
-    accessorKey: "invoice_number",
-    header: "Invoice Number",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("invoice_number")}</div>
-    ),
-  },
-  {
-    accessorKey: "customer_name",
-    header: "Customer Name",
-    cell: ({ row }) => <div>{row.getValue("customer_name")}</div>,
-  },
-  {
-    accessorKey: "invoice_by",
-    header: "Invoice By",
-    cell: ({ row }) => <div>{row.getValue("invoice_by")}</div>,
-  },
-  {
-    accessorKey: "total_discount",
-    header: "Discount",
-    cell: ({ row }) => {
-      const discount = parseFloat(row.getValue("total_discount") as string);
-
-      return <div className="text-center">{discount}</div>;
-    },
-  },
-  {
-    accessorKey: "total_amount",
-    header: () => <div className="text-right">Total Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("total_amount"));
-
-      // Format the amount as a PKR amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "PKR",
-        minimumFractionDigits: 0,
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const invoice = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(invoice.id)}
-            >
-              Copy Invoice ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View invoice details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+import { useRouter } from "next/navigation";
 
 type Sales = {
   id: string;
@@ -173,6 +56,134 @@ interface Ivoices {
 }
 
 export function ReportTable({ invoices }: Ivoices) {
+  const router = useRouter();
+
+  const columns: ColumnDef<Sales>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "created_at",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const rawDate = row.getValue("created_at") as string;
+        const formattedDate = new Date(rawDate).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+        return <div>{formattedDate}</div>;
+      },
+    },
+    {
+      accessorKey: "invoice_number",
+      header: "Invoice Number",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("invoice_number")}</div>
+      ),
+    },
+    {
+      accessorKey: "customer_name",
+      header: "Customer Name",
+      cell: ({ row }) => <div>{row.getValue("customer_name")}</div>,
+    },
+    {
+      accessorKey: "invoice_by",
+      header: "Invoice By",
+      cell: ({ row }) => <div>{row.getValue("invoice_by")}</div>,
+    },
+    {
+      accessorKey: "total_discount",
+      header: "Discount",
+      cell: ({ row }) => {
+        const discount = parseFloat(row.getValue("total_discount") as string);
+
+        return <div className="text-center">{discount}</div>;
+      },
+    },
+    {
+      accessorKey: "total_amount",
+      header: () => <div className="text-right">Total Amount</div>,
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("total_amount"));
+
+        // Format the amount as a PKR amount
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "PKR",
+          minimumFractionDigits: 0,
+        }).format(amount);
+
+        return <div className="text-right font-medium">{formatted}</div>;
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const invoice = row.original;
+
+        const handleViewInvoiceDetails = () => {
+          // Navigate to the dynamic route with the invoice ID
+          router.push(`/invoice/${invoice.id}`);
+        };
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(invoice.id)}
+              >
+                Copy Invoice ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View customer</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewInvoiceDetails}>
+                View invoice details
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
