@@ -36,80 +36,82 @@ const InvoiceDetailsPage = async ({ params }: { params: { id: string } }) => {
     .toString()
     .padStart(2, "0")}/${dateObj.getFullYear()}`;
 
-  return (
-    <div>
-      <h2 className="text-3xl font-bold tracking-tight pb-6 pt-6">
-        Invoice Details
-      </h2>
-      <Card>
-        <CardHeader>
-          <div className="flex gap-4 justify-between flex-wrap items-baseline">
-            <div className="grow">
-              <Label>Invoice#</Label>
-              <Input
-                value={invoiceData.invoice_number || "Not Available"}
-                type="number"
-                placeholder="Invoice Number"
-                readOnly
-              />
-            </div>
-            <div className="grow">
-              <Label>Invoice By</Label>
-              <Input
-                value={invoiceData.invoice_by || "Not Available"}
-                placeholder="Invoicer's Name"
-                readOnly
-              />
-            </div>
-            <div className="flex flex-col justify-end gap-1 grow">
-              <Label>Date</Label>
-              <Input
-                value={formattedDate || "Not Available"}
-                placeholder="Date"
-                readOnly
-              />
-            </div>
-          </div>
-        </CardHeader>
+    console.log(invoiceItems);
 
-        <CardContent className="flex flex-col gap-6">
-          <div className="flex gap-4 items-baseline flex-wrap">
-            <div className="grow">
-              <Label>Name</Label>
-              <Input
-                id="subject"
-                value={invoiceData.customer_name || "Not Available"}
-                placeholder="Customer's Name"
-                readOnly
-              />
+    return (
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight pb-6 pt-6">
+          Invoice Details
+        </h2>
+        <Card>
+          <CardHeader>
+            <div className="flex gap-4 justify-between flex-wrap items-baseline">
+              <div className="grow">
+                <Label>Invoice#</Label>
+                <Input
+                  value={invoiceData.invoice_number || "Not Available"}
+                  type="number"
+                  placeholder="Invoice Number"
+                  readOnly
+                />
+              </div>
+              <div className="grow">
+                <Label>Invoice By</Label>
+                <Input
+                  value={invoiceData.invoice_by || "Not Available"}
+                  placeholder="Invoicer's Name"
+                  readOnly
+                />
+              </div>
+              <div className="flex flex-col justify-end gap-1 grow">
+                <Label>Date</Label>
+                <Input
+                  value={formattedDate || "Not Available"}
+                  placeholder="Date"
+                  readOnly
+                />
+              </div>
             </div>
-            <div className="grow">
-              <Label>Phone Number</Label>
-              <Input
-                type="text"
-                value={invoiceData.customer_phone_number || "Not Available"}
-                placeholder="Customer's Phone"
-                readOnly
-              />
-            </div>
-          </div>
-          <div>
-            <Label>Address</Label>
-            <Textarea
-              value={
-                invoiceData.customer_address ||
-                "Customer's Address Not Available"
-              }
-              placeholder="Customer's Address"
-              readOnly
-            />
-          </div>
-        </CardContent>
-      </Card>
+          </CardHeader>
 
-      <InvoiceDetails />
-    </div>
-  );
+          <CardContent className="flex flex-col gap-6">
+            <div className="flex gap-4 items-baseline flex-wrap">
+              <div className="grow">
+                <Label>Name</Label>
+                <Input
+                  id="subject"
+                  value={invoiceData.customer_name || "Not Available"}
+                  placeholder="Customer's Name"
+                  readOnly
+                />
+              </div>
+              <div className="grow">
+                <Label>Phone Number</Label>
+                <Input
+                  type="text"
+                  value={invoiceData.customer_phone_number || "Not Available"}
+                  placeholder="Customer's Phone"
+                  readOnly
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Address</Label>
+              <Textarea
+                value={
+                  invoiceData.customer_address ||
+                  "Customer's Address Not Available"
+                }
+                placeholder="Customer's Address"
+                readOnly
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <InvoiceDetails invoiceItems={invoiceItems} />
+      </div>
+    );
 };
 
 export default InvoiceDetailsPage;
