@@ -92,6 +92,11 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
               updatedItem.amount = Number(detail.amount) * Number(newValue);
             }
           }
+          // Recalculate amount and totalDisc when disc changes
+          if (property === "disc") {
+            const discountDiff = Number(newValue) - item.disc;
+            updatedItem.amount = item.amount - discountDiff;
+          }
 
           return updatedItem;
         }
