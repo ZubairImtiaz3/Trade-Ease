@@ -173,7 +173,13 @@ export function ReportTable({ invoices }: Ivoices) {
                 Copy Invoice ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View customer</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push("/customers");
+                }}
+              >
+                View customer
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleViewInvoiceDetails}>
                 View invoice details
               </DropdownMenuItem>

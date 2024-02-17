@@ -174,10 +174,9 @@ export default async function Index() {
                 <CardContent>
                   <div className="text-2xl font-bold">
                     {topProduct
-                      ? topProduct.name
-                        ? topProduct.name.charAt(0).toUpperCase() +
-                          (topProduct.name.slice(1) ?? "")
-                        : "None"
+                      ? (topProduct.name
+                          ? topProduct.name.split("JAPAN").pop()?.trim()
+                          : "None") ?? "None"
                       : "None"}
                   </div>
                   <p className="text-xs text-muted-foreground">
