@@ -235,19 +235,11 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
       accessorKey: "amount",
       header: "Amount",
       cell: ({ row }) => {
-        const product = row.original.product;
-        const quantity = row.original.quantity;
-        const productDetails = productDetailsMap[product]?.details;
-        const detail = productDetails?.find(
-          (detail) => detail.size === row.original.size
-        );
-        const amount = detail ? Number(detail.amount) * quantity : 0; // Calculate amount based on quantity
-
         return (
           <Input
             className="max-w-[10rem]"
             type="text"
-            value={amount.toLocaleString()}
+            value={row.original.amount.toLocaleString()}
             readOnly
           />
         );
