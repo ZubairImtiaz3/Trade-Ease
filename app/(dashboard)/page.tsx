@@ -145,7 +145,7 @@ export default async function Index() {
                       : "None"}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Total Amount Spent PKR&nbsp;
+                    Total Amount Spent&nbsp;
                     {topCustomer !== null
                       ? formatedCurrency(topCustomer.maxTotalAmount, "PKR")
                       : ""}

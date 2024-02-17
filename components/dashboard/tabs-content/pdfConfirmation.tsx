@@ -112,9 +112,15 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
             },
             {
               title: "Product",
+              style: {
+                width: 70,
+              },
             },
             {
               title: "Size",
+              style: {
+                width: 23,
+              },
             },
             { title: "Quantity" },
             { title: "Amount" },
