@@ -73,38 +73,18 @@ const settingsSubmit = async ({ formData }: { formData: FormData }) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Check if user is submitting the profile for the first time
-  const data = await getProfile();
+  // Update existing data
+  const { data, error: updateError } = await supabase
+    .from("profiles")
+    .update({
+      ...formData,
+    })
+    .eq("id", user?.id)
+    .select();
 
-  if (data?.length === 0) {
-    // Upsert data if no existing profile is found
-    const { data, error: upsertError } = await supabase
-      .from("profiles")
-      .upsert([
-        {
-          id: user?.id,
-          ...formData,
-        },
-      ])
-      .select();
+  revalidatePath("/settings");
 
-    revalidatePath("/settings");
-
-    return upsertError;
-  } else {
-    // Update existing data
-    const { data, error: updateError } = await supabase
-      .from("profiles")
-      .update({
-        ...formData,
-      })
-      .eq("id", user?.id)
-      .select();
-
-    revalidatePath("/settings");
-
-    return updateError;
-  }
+  return updateError;
 };
 
 export const updateDashboardFilterPreference = async ({
