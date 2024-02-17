@@ -10,7 +10,6 @@ export interface InvoiceItem {
   id: string;
   product: string;
   size: string;
-  squareft: string;
   quantity: number;
   disc: number;
   amount: number;
@@ -88,7 +87,6 @@ export const createInvoice = async (invoiceData: InvoiceData) => {
           invoice_id: createdInvoiceId,
           product: item.product,
           size: item.size,
-          square_ft: item.squareft,
           quantity: item.quantity,
           amount: item.amount,
           discount: item.disc,

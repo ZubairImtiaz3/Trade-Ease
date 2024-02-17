@@ -41,7 +41,6 @@ export type Payment = {
   id: string;
   product: string;
   size: string;
-  squareft: string;
   quantity: number;
   disc: number;
   amount: number;
@@ -64,13 +63,6 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "size",
     header: "Size",
     cell: ({ row }) => <div className="capitalize">{row.getValue("size")}</div>,
-  },
-  {
-    accessorKey: "square_ft",
-    header: "Squareft",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("square_ft")}</div>
-    ),
   },
   {
     accessorKey: "quantity",

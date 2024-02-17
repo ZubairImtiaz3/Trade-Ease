@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -38,7 +38,6 @@ export type Product = {
   id: string;
   product: string;
   size: string;
-  squareft: string;
   quantity: number;
   disc: number;
   amount: number;
@@ -50,7 +49,6 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
       id: uuidv4(),
       product: "",
       size: "",
-      squareft: "",
       quantity: 1,
       disc: 0,
       amount: 0,
@@ -70,14 +68,13 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
         if (item.id === productId) {
           let updatedItem = { ...item, [property]: newValue };
 
-          // Update squareft and amount when size changes
+          // Update amount when size changes
           if (property === "size") {
             const productDetails = productDetailsMap[item.product]?.details;
             const detail = productDetails?.find(
               (detail) => detail.size === newValue
             );
             if (detail) {
-              updatedItem.squareft = detail.squareFt;
               updatedItem.amount = Number(detail.amount) * updatedItem.quantity;
             }
           }
@@ -183,23 +180,6 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
               ))}
             </SelectContent>
           </Select>
-        );
-      },
-    },
-    {
-      accessorKey: "squareft",
-      header: "Square Ft",
-      cell: ({ row }) => {
-        return (
-          <Input
-            className="max-w-[5rem]"
-            readOnly
-            type="number"
-            value={row.original.squareft}
-            onChange={(e) =>
-              handleValueChange(row.original.id, e.target.value, "squareft")
-            }
-          />
         );
       },
     },

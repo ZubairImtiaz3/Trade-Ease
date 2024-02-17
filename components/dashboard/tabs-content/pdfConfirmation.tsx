@@ -116,7 +116,6 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
             {
               title: "Size",
             },
-            { title: "SQft" },
             { title: "Quantity" },
             { title: "Amount" },
             { title: "Disc" },
@@ -126,7 +125,6 @@ export function PdfConfirm({ isOpen, onClose, userProfile }: PdfConfirmProps) {
             index + 1,
             item.product,
             item.size,
-            `${item.square_ft}ft`,
             item.quantity,
             item.amount,
             item.discount,
