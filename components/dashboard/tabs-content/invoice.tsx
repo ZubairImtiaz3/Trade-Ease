@@ -103,6 +103,16 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
 
     completeInvoice.invoiceSummary.data = filteredData;
 
+    if (filteredData.length === 0) {
+      toast({
+        variant: "default",
+        title: "Attention",
+        description: "At least one product is required for the invoice.",
+      });
+      setLoading(false);
+      return;
+    }
+
     console.log("completeInvoice", completeInvoice);
 
     const { error, success } = await createInvoice(completeInvoice);
