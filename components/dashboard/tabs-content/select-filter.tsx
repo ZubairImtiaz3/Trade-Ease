@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { updateDashboardFilterPreference } from "@/actions/settingsSubmit";
 import { useToast } from "@/components/ui/use-toast";
+import { Icons } from "@/components/ui/icons";
 
 interface SelectFilterProps {
   userprofile: {
@@ -24,10 +25,12 @@ const SelectFilter: React.FC<SelectFilterProps> = ({ userprofile }) => {
   const [selectedInterval, setSelectedInterval] = useState<string>(
     userprofile?.dashboard_filter_preference || ""
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Update dashboard_filter_preference when selectedInterval changes
   const handleIntervalChange = async (value: string) => {
     setSelectedInterval(value);
+    setIsLoading(true);
 
     try {
       const error = await updateDashboardFilterPreference({
@@ -54,28 +57,36 @@ const SelectFilter: React.FC<SelectFilterProps> = ({ userprofile }) => {
       }
     } catch (error) {
       console.error("Error updating dashboard filter preference:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="hidden md:flex items-center space-x-2">
       <div className="grid gap-2">
-        <Select
-          defaultValue={selectedInterval}
-          onValueChange={handleIntervalChange}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="daily">Daily</SelectItem>
-            <SelectItem value="weekly">Weekly</SelectItem>
-            <SelectItem value="monthly">Monthly</SelectItem>
-            <SelectItem value="alltime">All Time</SelectItem>
-          </SelectContent>
-        </Select>
+        {isLoading ? (
+          <Icons.spinner className="text-[#00E896] mr-1 h-6 w-6 animate-spin" />
+        ) : (
+          <Select
+            defaultValue={selectedInterval}
+            onValueChange={handleIntervalChange}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="daily">Daily</SelectItem>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="alltime">All Time</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
       </div>
-      <Button className="py">Download</Button>
+      <Button disabled={isLoading} className="py">
+        Download
+      </Button>
     </div>
   );
 };

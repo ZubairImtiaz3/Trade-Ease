@@ -106,10 +106,10 @@ const InvoiceDetailsPage = async ({ params }: { params: { id: string } }) => {
                 readOnly
               />
             </div>
+
+            <InvoiceDetails invoiceItems={invoiceItems} />
           </CardContent>
         </Card>
-
-        <InvoiceDetails invoiceItems={invoiceItems} />
       </div>
     );
 };
