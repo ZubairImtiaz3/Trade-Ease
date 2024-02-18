@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -64,31 +64,21 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
     property: keyof Product
   ) => {
     setData((currentData) => {
-      let newData = currentData.map((item) => {
+      const newData = currentData.map((item) => {
         if (item.id === productId) {
           let updatedItem = { ...item, [property]: newValue };
 
-          // Update amount when size changes
-          if (property === "size") {
+          // Update amount when size or quantity changes
+          if (property === "size" || property === "quantity") {
             const productDetails = productDetailsMap[item.product]?.details;
             const detail = productDetails?.find(
-              (detail) => detail.size === newValue
+              (detail) => detail.size === updatedItem.size
             );
             if (detail) {
               updatedItem.amount = Number(detail.amount) * updatedItem.quantity;
             }
           }
 
-          // Recalculate amount when quantity changes
-          if (property === "quantity") {
-            const productDetails = productDetailsMap[item.product]?.details;
-            const detail = productDetails?.find(
-              (detail) => detail.size === item.size
-            );
-            if (detail) {
-              updatedItem.amount = Number(detail.amount) * Number(newValue);
-            }
-          }
           // Recalculate amount and totalDisc when disc changes
           if (property === "disc") {
             const discountDiff = Number(newValue) - item.disc;
@@ -106,17 +96,12 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
         productId === newData[newData.length - 1].id &&
         newValue
       ) {
-        newData = [...newData, createNewRow()];
+        return [...newData, createNewRow()];
       }
 
       // Calculate Totals
-      let totalDisc = 0;
-      let totalAmount = 0;
-
-      newData.forEach((item) => {
-        totalDisc += Number(item.disc);
-        totalAmount += item.amount;
-      });
+      let totalDisc = newData.reduce((acc, item) => acc + Number(item.disc), 0);
+      let totalAmount = newData.reduce((acc, item) => acc + item.amount, 0);
 
       setTotals({ totalDisc, totalAmount });
 
@@ -129,103 +114,110 @@ export function InvoiceTable({ invoiceSalesSummary }: any) {
     });
   };
 
-  const columns: ColumnDef<Product>[] = [
-    {
-      accessorKey: "product",
-      header: "Product",
-      cell: ({ row }) => (
-        <Select
-          defaultValue={row.original.product}
-          onValueChange={(newProduct) =>
-            handleValueChange(row.original.id, newProduct, "product")
-          }
-        >
-          <SelectTrigger id={`product-select-${row.id}`}>
-            <SelectValue placeholder="Select a product" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.keys(productDetailsMap).map((product) => (
-              <SelectItem key={product} value={product}>
-                {product.charAt(0).toUpperCase() + product.slice(1)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      ),
-    },
-    {
-      accessorKey: "size",
-      header: "Size",
-      cell: ({ row }) => {
-        const product = row.original.product;
-        const sizes = product
-          ? productDetailsMap[product]?.details.map((detail) => detail.size) ||
-            []
-          : [];
-        return (
-          <Select
-            defaultValue={row.original.size}
-            onValueChange={(newSize) =>
-              handleValueChange(row.original.id, newSize, "size")
+  const MemoizedSelect = React.memo(Select);
+  const MemoizedInput = React.memo(Input);
+
+  const columns: ColumnDef<Product>[] = useMemo(
+    () => [
+      {
+        accessorKey: "product",
+        header: "Product",
+        cell: ({ row }) => (
+          <MemoizedSelect
+            defaultValue={row.original.product}
+            onValueChange={(newProduct) =>
+              handleValueChange(row.original.id, newProduct, "product")
             }
           >
-            <SelectTrigger id={`size-select-${row.id}`}>
-              <SelectValue placeholder="Select a size" />
+            <SelectTrigger id={`product-select-${row.id}`}>
+              <SelectValue placeholder="Select a product" />
             </SelectTrigger>
             <SelectContent>
-              {sizes.map((size) => (
-                <SelectItem key={size} value={size}>
-                  {size}
+              {Object.keys(productDetailsMap).map((product) => (
+                <SelectItem key={product} value={product}>
+                  {product.charAt(0).toUpperCase() + product.slice(1)}
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
-        );
+          </MemoizedSelect>
+        ),
       },
-    },
-    {
-      accessorKey: "quantity",
-      header: "Quantity",
-      cell: ({ row }) => (
-        <Input
-          className="max-w-[5rem]"
-          type="number"
-          value={row.original.quantity}
-          onChange={(e) =>
-            handleValueChange(row.original.id, e.target.value, "quantity")
-          }
-        />
-      ),
-    },
-    {
-      accessorKey: "disc",
-      header: "Disc",
-      cell: ({ row }) => (
-        <Input
-          className="w-12 md:w-auto md:max-w-[5rem]"
-          type="number"
-          value={row.original.disc}
-          onChange={(e) =>
-            handleValueChange(row.original.id, e.target.value, "disc")
-          }
-        />
-      ),
-    },
-    {
-      accessorKey: "amount",
-      header: "Amount",
-      cell: ({ row }) => {
-        return (
-          <Input
-            className="max-w-[10rem]"
-            type="text"
-            value={row.original.amount.toLocaleString()}
-            readOnly
+      {
+        accessorKey: "size",
+        header: "Size",
+        cell: ({ row }) => {
+          const product = row.original.product;
+          const sizes = product
+            ? productDetailsMap[product]?.details.map(
+                (detail) => detail.size
+              ) || []
+            : [];
+          return (
+            <MemoizedSelect
+              defaultValue={row.original.size}
+              onValueChange={(newSize) =>
+                handleValueChange(row.original.id, newSize, "size")
+              }
+            >
+              <SelectTrigger id={`size-select-${row.id}`}>
+                <SelectValue placeholder="Select a size" />
+              </SelectTrigger>
+              <SelectContent>
+                {sizes.map((size) => (
+                  <SelectItem key={size} value={size}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </MemoizedSelect>
+          );
+        },
+      },
+      {
+        accessorKey: "quantity",
+        header: "Quantity",
+        cell: ({ row }) => (
+          <MemoizedInput
+            className="max-w-[5rem]"
+            type="number"
+            value={row.original.quantity}
+            onChange={(e) =>
+              handleValueChange(row.original.id, e.target.value, "quantity")
+            }
           />
-        );
+        ),
       },
-    },
-  ];
+      {
+        accessorKey: "disc",
+        header: "Disc",
+        cell: ({ row }) => (
+          <MemoizedInput
+            className="w-12 md:w-auto md:max-w-[5rem]"
+            type="number"
+            value={row.original.disc}
+            onChange={(e) =>
+              handleValueChange(row.original.id, e.target.value, "disc")
+            }
+          />
+        ),
+      },
+      {
+        accessorKey: "amount",
+        header: "Amount",
+        cell: ({ row }) => {
+          return (
+            <MemoizedInput
+              className="max-w-[10rem]"
+              type="text"
+              value={row.original.amount.toLocaleString()}
+              readOnly
+            />
+          );
+        },
+      },
+    ],
+    []
+  );
 
   const table = useReactTable({
     data,
