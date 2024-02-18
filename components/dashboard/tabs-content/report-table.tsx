@@ -36,7 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 type Sales = {
   id: string;
