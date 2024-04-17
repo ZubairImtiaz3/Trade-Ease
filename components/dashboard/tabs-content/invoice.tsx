@@ -46,7 +46,8 @@ const schema = yup.object().shape({
 });
 
 export function Invoice({ userprofile, lastInvoiceNumber }: any) {
-  let nextInvoiceNumber = lastInvoiceNumber ? lastInvoiceNumber + 1 : null;
+  let nextInvoiceNumber =
+    lastInvoiceNumber !== null ? lastInvoiceNumber + 1 : 1;
   const { toast } = useToast();
 
   const [saleSummary, setSaleSummary] = useState({});
@@ -146,7 +147,7 @@ export function Invoice({ userprofile, lastInvoiceNumber }: any) {
               <div className="grow">
                 <Label htmlFor="invoice#">Invoice#</Label>
                 <Input
-                  disabled={lastInvoiceNumber !== null}
+                  disabled={nextInvoiceNumber !== null}
                   value={nextInvoiceNumber}
                   type="number"
                   placeholder="Invoice Number"
