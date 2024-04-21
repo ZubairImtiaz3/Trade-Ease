@@ -37,41 +37,41 @@ const PrintInvoiceDetails = ({
       orientationLandscape: false,
       compress: true,
       logo: {
-        src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/logo.png",
+        src: "https://pibktyaqivpnqznqlgzm.supabase.co/storage/v1/object/public/trade-ease/hajvery-form-logo.jpeg",
         type: "PNG",
-        width: 53.33, //aspect ratio = width/height
-        height: 26.66,
+        width: 33.33, //aspect ratio = width/height
+        height: 33.33,
         margin: {
-          top: 0,
+          top: -3,
           left: 0,
         },
       },
-      stamp: {
-        inAllPages: false, //by default = false, just in the last page
-        src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg",
-        type: "JPG",
-        width: 20, //aspect ratio = width/height
-        height: 20,
-        margin: {
-          top: 0,
-          left: 0,
-        },
-      },
+      // stamp: {
+      //   inAllPages: false, //by default = false, just in the last page
+      //   src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg",
+      //   type: "JPG",
+      //   width: 20, //aspect ratio = width/height
+      //   height: 20,
+      //   margin: {
+      //     top: 0,
+      //     left: 0,
+      //   },
+      // },
       business: {
         name: `${userProfile.company_name}`,
         address: `${userProfile.company_address}`,
         phone: `${userProfile.company_name}`,
-        email: "email@example.com",
-        email_1: "info@example.al",
-        website: "www.example.al",
+        // email: "email@example.com",
+        // email_1: "info@example.al",
+        // website: "www.example.al",
       },
       contact: {
         label: "Invoice issued for:",
         name: `${invoice.customer_name}`,
         address: `${invoice.customer_address ?? ""}`,
         phone: `${invoice.customer_phone_number ?? ""}`,
-        email: "client@website.al",
-        otherInfo: "www.website.al",
+        // email: "client@website.al",
+        // otherInfo: "www.website.al",
       },
       invoice: {
         label: `Invoice #:`,
@@ -121,31 +121,31 @@ const PrintInvoiceDetails = ({
         additionalRows: [
           {
             col1: "Total:",
-            col2: String(invoice.total_amount),
+            col2: String(invoice.total_amount) + "/-",
             col3: "PkR",
             style: {
-              fontSize: 14,
+              fontSize: 13,
             },
           },
           {
             col1: "Disc:",
             col2: String(invoice.total_discount.toFixed(2)),
             style: {
-              fontSize: 10,
+              fontSize: 12,
             },
           },
           {
             col1: "SubTotal:",
-            col2: String(subtotal.toFixed(2)),
+            col2: String(subtotal) + "/-",
             col3: "PKR",
             style: {
-              fontSize: 10,
+              fontSize: 13,
             },
           },
         ],
         invDescLabel: "Invoice Note",
         invDesc:
-          "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary.",
+          "Thank you for choosing Hajvery Foam Classic Brand. We appreciate your business.Your satisfaction is our priority. Should you have any inquiries or require further assistance regarding your purchase, please don't hesitate to contact us. Best Regards.",
       },
       footer: {
         text: "The invoice is created on a computer and is valid without the signature and stamp.",
