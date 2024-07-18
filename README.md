@@ -1,24 +1,54 @@
-<p align="center">
-  App with Next.js and Supabase
-</p>
+<div align="center">
+<h1>Trade Ease - Invoicing and Sales Analytics App</h1>
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-</p>
-<br/>
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-## Features
+</div>
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Styling with [Tailwind CSS](https://tailwindcss.com)
+A full-stack app built with NextJs, TypeScript, Shadcn UI, and Supabase. It allows users to generate and manage invoices in PDF format, track all related data, and view detailed sales analytics through a dynamic dashboard.
+
+## Features <a name="features"></a>
+
+<li>
+🔐 Secure sign-in and user management to keep each user's data safe.
+</li>
+<li>
+🧾 Easily create and manage invoices for sold items.
+</li>
+<li>
+📄 Download invoices in a PDF template.
+</li>
+<li>
+📊 Keep track of all invoice data with comprehensive records.
+</li>
+<li>
+📈 Get an overview of sales with a dynamic dashboard.
+</li>
+<li>
+🗓️ Customize your dashboard view with daily, weekly, monthly, or all-time preference option.
+</li>
+
+## Technologies <a name="technologies"></a>
+- `Next.Js`
+- `TypeScript`
+- `Supabase`
+- `Shadcn UI`
+- `Tailwind CSS`
+- `InvoiceTemplateJsPdf` 
+
+## Images <a name="images"></a>
+
+### Dashboard <a name="dashboard"></a>
+
+<img width="400" alt="dashboard" src="public/popup.png">
+
+### Create Invoice <a name="create invoice"></a>
+
+<img width="800" alt="popup" src="public/table.png">
+
 
 ## Demo
 
