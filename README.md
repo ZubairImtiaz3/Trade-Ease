@@ -37,7 +37,23 @@ A full-stack app built with NextJs, TypeScript, Shadcn UI, and Supabase. It allo
 - `Supabase`
 - `Shadcn UI`
 - `Tailwind CSS`
-- `InvoiceTemplateJsPdf` 
+- `InvoiceTemplateJsPdf`
+
+## The Process <a name="the orocess"></a>
+
+I began by setting up the backend with Supabase. I designed a database schema featuring three key tables: `invoices` for all invoice data, `invoice_items` for individual items, and `profiles` for user company details.
+
+For the frontend, I chose Next.js and Shadcn UI. Next.js helped me lay the foundation, while Shadcn UI allowed me to craft a sleek and functional user interface.
+
+User authentication was powered by Supabase’s built-in features, ensuring a secure and seamless experience. I also created an onboarding screen to collect and store user company data in the `profiles` table.
+
+Managing invoices was next. I integrated the Supabase API to both create and display invoices. To handle PDF generation, I used a library to create and format invoices based on a template.
+
+Lastly, I built a dynamic sales dashboard to show analytics. By fetching data from Supabase,  I was able to populate the dashboard and display key metrics, providing users with valuable sales analytics.
+
+Along the way, while building everything, I took notes on what I've learned so I don't miss out on it. I also documented the behind-the-scenes processes every time a feature was added.
+
+It's funny how writing down what I've built made me understand it better. When I started documenting the features and processes, I realized that stepping back and reflecting on it really helps me get a clearer picture. It's a great habit to develop when learning something new.
 
 ## Images <a name="images"></a>
 
@@ -63,35 +79,16 @@ Password: Zubi1234.
 
 Feel free to generate an invoice with your name for test purposes—just don't go overboard and crash the system! 😅
 
-## Clone and run locally
+## How it can be improved
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
-
-   ```bash
-   npx create-next-app -e with-supabase
-   ```
-
-3. Use `cd` to change into the app's directory
-
-   ```bash
-   cd name-of-new-app
-   ```
-
-4. Rename `.env.local.example` to `.env.local` and update the following:
-
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
-
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
-
-5. You can now run the Next.js local development server:
-
-   ```bash
-   npm run dev
-   ```
-
-   The app should now be running on [localhost:3000](http://localhost:3000/).
+<li>
+<b>Public Sign-Ups: </b> Our current architecture can handle multiple user data concurrently, so the next step is to enable public sign-ups, allowing a broader user base to access and utilize the app.
+</li>
+<li>
+   <b>Custom Product Management: </b>
+Allow users to add their own products and customize product attributes, such as size, to better fit their specific needs.
+</li>
+<li>
+<b>Additional PDF Templates: </b>
+ Expand the range of available PDF invoice templates to offer more options for users, enabling them to choose or design templates that best suit their branding and presentation needs.
+</li>
