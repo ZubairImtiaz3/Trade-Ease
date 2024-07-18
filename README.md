@@ -43,16 +43,25 @@ A full-stack app built with NextJs, TypeScript, Shadcn UI, and Supabase. It allo
 
 ### Dashboard <a name="dashboard"></a>
 
-<img width="400" alt="dashboard" src="public/popup.png">
+<img width="800" alt="dashboard" src="public/Dashboard.png">
 
 ### Create Invoice <a name="create invoice"></a>
 
-<img width="800" alt="popup" src="public/table.png">
+<img width="800" alt="popup" src="public/CreateInvoice.png">
 
+### Invoice Pdf <a name="invoice pdf"></a>
+
+<img width="800" alt="popup" src="public/PdfInvoice.png">
 
 ## Demo
 
 You can view a fully working demo at [trade-ease.vercel.app](https://trade-ease.vercel.app/).
+
+Test User Credentials: <br/>
+Email: Zubairimtiaz395@gmail.com <br/>
+Password: Zubi1234.
+
+Feel free to generate an invoice with your name for test purposes—just don't go overboard and crash the system! 😅
 
 ## Clone and run locally
 
